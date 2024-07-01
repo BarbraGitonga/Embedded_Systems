@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Embedded_Systems",
+			"path": "../../../../../Desktop/Embedded_Systems"
+		},
+		{
+			"name": "MPU6050",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
