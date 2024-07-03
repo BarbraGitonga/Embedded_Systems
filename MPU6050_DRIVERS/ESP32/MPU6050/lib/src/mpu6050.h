@@ -12,6 +12,7 @@
 #ifndef MPU6050_I2C_DRIVER_H
 #define MPU6050_I2C_DRIVER_H
 
+
 #define SELF_TEST_X         0x0D        
 #define SELF_TEST_Y         0x0E
 #define SELF_TEST_Z         0x0F
@@ -48,10 +49,12 @@
 #define FIFO_R_W            0x74
 
 #define WHO_AM_I            0x75
+#define MPU6050_ID          0x68 //default value of who am i register
 
+#include <Arduino.h>
 class MPU6050{
     public:
-        void identity();
+        String identity();
 
 };
 
