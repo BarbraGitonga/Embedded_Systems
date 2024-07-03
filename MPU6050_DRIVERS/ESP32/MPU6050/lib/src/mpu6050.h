@@ -49,4 +49,10 @@
 
 #define WHO_AM_I            0x75
 
+class MPU6050{
+    public:
+        void identity();
+
+};
+
 #endif
