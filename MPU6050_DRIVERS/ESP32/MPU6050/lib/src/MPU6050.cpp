@@ -2,6 +2,8 @@
 #include <Wire.h>
 
 String MPU6050::identity(){
+    Wire.begin();
+
     Wire.beginTransmission(MPU6050_ID);
     Wire.write(WHO_AM_I);
     Wire.endTransmission(false);
