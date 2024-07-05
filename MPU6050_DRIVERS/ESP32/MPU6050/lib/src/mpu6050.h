@@ -12,6 +12,7 @@
 #ifndef MPU6050_I2C_DRIVER_H
 #define MPU6050_I2C_DRIVER_H
 
+#include <Arduino.h>
 
 #define SELF_TEST_X         0x0D        
 #define SELF_TEST_Y         0x0E
@@ -51,11 +52,23 @@
 #define WHO_AM_I            0x75
 #define MPU6050_ID          0x68 //default value of who am i register
 
-#include <Arduino.h>
+//power management 1 params
+#define PWR_MGMT_1          0x6B
+#define DEVICE_RESET
+#define SLEEP               0
+#define CYCLE               1
+#define TEMP_DIS            0
+#define CLKSEL              4
+
+//Powe management 2
+#define PWR_MGMT_2          0x6C
+#define LP_WAKE_CTRL        3
 class MPU6050{
     public:
+        uint8_t readRegister(uint8_t regAddress);
+        uint8_t writeRegister(uint8_t regAddress, int value);
         String identity();
-
+        void initialize();
 };
 
 #endif
