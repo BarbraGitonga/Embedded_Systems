@@ -54,19 +54,22 @@
 
 //power management 1 params
 #define PWR_MGMT_1          0x6B
-#define DEVICE_RESET
-#define SLEEP               0
-#define CYCLE               1
-#define TEMP_DIS            0
-#define CLKSEL              4
+#define DEVICE_RESET        0x80 //soft reset 
+#define PWR_VAR_1           0x84 //x-axis gyroscope, cycle
 
-//Powe management 2
+//Power management 2
 #define PWR_MGMT_2          0x6C
-#define LP_WAKE_CTRL        3
+#define LP_WAKE_CTRL        0x03
+
+//Signal path reset
+#define SIGNAL_PATH_RESET   0x68
+#define SENSOR_RESET        0xE0
+
+
 class MPU6050{
     public:
         uint8_t readRegister(uint8_t regAddress);
-        uint8_t writeRegister(uint8_t regAddress, int value);
+        uint8_t writeRegister(uint8_t regAddress, uint8_t value);
         String identity();
         void initialize();
 };

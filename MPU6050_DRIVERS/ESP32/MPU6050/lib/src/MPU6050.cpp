@@ -6,12 +6,12 @@ uint8_t MPU6050::readRegister(uint8_t regAddress){
     return Wire.read();
 }
 
-uint8_t MPU6050::writeRegister(uint8_t regAddress, int value){
-    Wire.beginTransmission(regAddress);
+uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
+    Wire.beginTransmission(MPU6050_ID);
+    Wire.write(regAddress);
     Wire.write(value);
-    Wire.endTransmission(false);
-    
-    return Wire.read();
+    Wire.endTransmission(true);
+    return Wire.endTransmission(); // Return the status of the transmission
 }
 
 String MPU6050::identity(){
@@ -39,15 +39,27 @@ String MPU6050::identity(){
 void MPU6050::initialize(){
     Wire.begin();
     
-    if(Wire.available()){
-        uint8_t who_am_i = readRegister(MPU6050_ID);
-        if (who_am_i == MPU6050_ID){
-            writeRegister(PWR_MGMT_1, CYCLE);
-            writeRegister(PWR_MGMT_1, CLKSEL);
-        }
-        else {
+    if(identity()=="0x68"){
+        Serial.println("device_found");
+
+        //Reseting device abd signal paths
+        writeRegister(PWR_MGMT_1, DEVICE_RESET);
+        delay(100);
+        writeRegister(SIGNAL_PATH_RESET, SENSOR_RESET);
+        delay(100);
+
+        //setting clock speed and enabling sensors
+        writeRegister(PWR_MGMT_1, PWR_VAR_1);
+        writeRegister(PWR_MGMT_2, 0x00); //enable all sensors
+
+        //configuring range of sensors
+        writeRegister(GYRO_CONFIG, 0x00); //full scale range of 250
+        writeRegister(ACCEL_CONFIG, 0x00); //full scale range of 2g
+
+        Serial.println("initialized");
+    }
+    else if(identity() == "Unknown Device"){
             Serial.println("Unknown Device");
-        }
     }
     else {
         Serial.println("No device detected");
