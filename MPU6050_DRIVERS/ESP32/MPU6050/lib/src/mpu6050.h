@@ -73,6 +73,9 @@ class MPU6050{
         String identity();
         void initialize();
         String test();
+        float gyroscope();
+        float accelerometer();
+        float temperature();
 };
 
 #endif

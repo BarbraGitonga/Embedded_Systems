@@ -70,9 +70,25 @@ void MPU6050::initialize(){
 }
 
 String MPU6050::test(){
-    writeRegister(GYRO_CONFIG, 0x07);
-    writeRegister(ACCEL_CONFIG, 0x07);
+    writeRegister(GYRO_CONFIG, 0x07); // 250dps
+    writeRegister(ACCEL_CONFIG, 0x0F); //8g
+
+    uint8_t x_ = readRegister(SELF_TEST_X);
+    uint8_t y = readRegister(SELF_TEST_Y);
+    uint8_t z = readRegister(SELF_TEST_Z);
+
+    // gyroscope
     return "set";
 }
+  
+float MPU6050::gyroscope(){
+
+}   
+
+float MPU6050::accelerometer(){
+
+}
+
+float MPU6050::temperature(){
     
-    
+}
