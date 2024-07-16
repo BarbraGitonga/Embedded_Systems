@@ -21,12 +21,13 @@ uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
 void MPU6050::burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer){
     Wire.beginTransmission(MPU6050_ID);
     Wire.write(starting_reg);
-    Wire.endTransmission(true);
+    Wire.endTransmission(false);
 
     Wire.requestFrom(static_cast<uint8_t>(MPU6050_ID), static_cast<size_t>(bytes), true);
 
-    for(int i=0; i<=bytes; i++) {
+    for(int i=0; i<bytes; i++) {
         buffer[i] = Wire.read();
+        Serial.println(buffer[i]);
     }
 }
 
@@ -57,7 +58,7 @@ void MPU6050::initialize(){
     
     if(identity()=="0x68"){
         Serial.println("device_found");
-        //Reseting device abd signal paths
+        //Reseting device and signal paths
         writeRegister(PWR_MGMT_1, DEVICE_RESET);
         delay(1000);
         writeRegister(SIGNAL_PATH_RESET, SENSOR_RESET);
@@ -93,28 +94,32 @@ String MPU6050::test(){
     return "set";
 }
   
-int16_t MPU6050::gyroscope(){
+void MPU6050::gyroscope(){
     int8_t buffer[6];
     burstReadRegisters(GYRO_XOUT_H, 6, buffer);
     int16_t gyro_x_out = (int16_t)((buffer[0] << 8) | buffer[1]);
-    int16_t gyro_y_out = (int16_t)((buffer[0] << 8) | buffer[1]);
-    int16_t gyro_z_out = (int16_t)((buffer[0] << 8) | buffer[1]);
-    Serial.print(gyro_x_out);  Serial.print(gyro_y_out);  Serial.println(gyro_z_out);
-    return gyro_x_out, gyro_y_out, gyro_z_out;
+    int16_t gyro_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
+    int16_t gyro_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
+    Serial.print("Gyro"); Serial.print(gyro_x_out);  Serial.print(gyro_y_out);  Serial.println(gyro_z_out);
+
+
+    //return gyro_x_out, gyro_y_out, gyro_z_out;
 }   
 
-float MPU6050::accelerometer(){
-    float xyz = 0.6;
-    return xyz;
+void MPU6050::accelerometer(){
+    int8_t buffer[6];
+    burstReadRegisters(ACCEL_XOUT_H, 6, buffer);
+    int16_t accel_x_out = (int16_t)((buffer[0] << 8) | buffer[1]);
+    int16_t accel_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
+    int16_t accel_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
+    Serial.print("Accel"); Serial.print(accel_x_out); Serial.print(accel_y_out); Serial.println(accel_z_out);
 }
 
 float MPU6050::temperature(){
-    int8_t temp_h = readRegister(TEMP_OUT_H); // high bytes of the temperature
-    int8_t temp_l = readRegister(TEMP_OUT_L); // low bytes of temperature
-    Serial.print("High Byte: "); Serial.println(temp_h, HEX);
-    Serial.print("Low Byte: "); Serial.println(temp_l, HEX);
-    int16_t temp_out = (static_cast<int16_t>(temp_h) << 8) | temp_l; // combined low and high bytes
-    Serial.println(temp_out);
+    int8_t buffer[2];
+    burstReadRegisters(TEMP_OUT_H, 2, buffer);
+    int16_t temp_out = (static_cast<int16_t>(buffer[0]) << 8) | buffer[1]; // combined low and high bytes
+    Serial.print("Temp");  Serial.println(temp_out);
     float temp_in_degrees_C = (static_cast<float>(temp_out) / 340.0f) + 36.53f; // temperature in degrees
     return temp_in_degrees_C;
 }

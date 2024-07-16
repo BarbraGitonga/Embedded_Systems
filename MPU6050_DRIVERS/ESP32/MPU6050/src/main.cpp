@@ -13,5 +13,6 @@ void loop(){
     float temp = MPU.temperature();
     Serial.println(temp);
     MPU.gyroscope();
+    MPU.accelerometer();
     delay(1000);
 }
