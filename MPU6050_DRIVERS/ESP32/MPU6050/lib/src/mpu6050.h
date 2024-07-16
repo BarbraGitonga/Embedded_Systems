@@ -54,7 +54,7 @@
 
 //power management 1 params
 #define PWR_MGMT_1          0x6B
-#define DEVICE_RESET        0x80 //soft reset 
+#define DEVICE_RESET        0x01 //soft reset 
 #define PWR_VAR_1           0x84 //x-axis gyroscope, cycle
 
 //Power management 2
@@ -72,6 +72,7 @@ class MPU6050{
         uint8_t writeRegister(uint8_t regAddress, uint8_t value);
         String identity();
         void initialize();
+        String test();
 };
 
 #endif

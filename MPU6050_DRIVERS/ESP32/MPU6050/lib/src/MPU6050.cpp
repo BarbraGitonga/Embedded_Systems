@@ -2,6 +2,10 @@
 #include <Wire.h>
 
 uint8_t MPU6050::readRegister(uint8_t regAddress){
+    Wire.beginTransmission(MPU6050_ID);
+    Wire.write(regAddress);
+    Wire.endTransmission(true);  // Do not send stop condition
+
     Wire.requestFrom(static_cast<uint8_t>(MPU6050_ID), static_cast<size_t>(1), true);
     return Wire.read();
 }
@@ -41,7 +45,6 @@ void MPU6050::initialize(){
     
     if(identity()=="0x68"){
         Serial.println("device_found");
-
         //Reseting device abd signal paths
         writeRegister(PWR_MGMT_1, DEVICE_RESET);
         delay(100);
@@ -66,5 +69,10 @@ void MPU6050::initialize(){
     }
 }
 
+String MPU6050::test(){
+    writeRegister(GYRO_CONFIG, 0x07);
+    writeRegister(ACCEL_CONFIG, 0x07);
+    return "set";
+}
     
     
