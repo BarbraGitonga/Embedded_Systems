@@ -1,7 +1,7 @@
 /**
  * @file mpu6050.h
  * @author Barbra Gitonga (gitongabarbra@gmail.com)
- * @brief 
+ * @brief This is a MPU6050 driver that can be used to carry out basic MPU6050 functions
  * @version 0.1
  * @date 2024-06-15
  * 
@@ -27,6 +27,7 @@
 #define FIFO_EN             0x23
 #define I2C_MST_CTRL        0x24
 
+//acceleration readings
 #define ACCEL_XOUT_H        0x3B
 #define ACCEL_XOUT_L        0x3C
 #define ACCEL_YOUT_H        0x3D
@@ -34,9 +35,11 @@
 #define ACCEL_ZOUT_H        0x3F
 #define ACCEL_ZOUT_L        0x40
 
+//temperature readings
 #define TEMP_OUT_H          0x41
 #define TEMP_OUT_L          0x42
 
+//gyroscope readings
 #define GYRO_XOUT_H         0x43
 #define GYRO_XOUT_L         0x44
 #define GYRO_YOUT_H         0x45
@@ -49,6 +52,7 @@
 #define FIFO_COUNTL         0x73
 #define FIFO_R_W            0x74
 
+//identity
 #define WHO_AM_I            0x75
 #define MPU6050_ID          0x68 //default value of who am i register
 
@@ -59,7 +63,7 @@
 
 //Power management 2
 #define PWR_MGMT_2          0x6C
-#define LP_WAKE_CTRL        0x03
+#define LP_WAKE_CTRL        
 
 //Signal path reset
 #define SIGNAL_PATH_RESET   0x68
@@ -70,10 +74,11 @@ class MPU6050{
     public:
         uint8_t readRegister(uint8_t regAddress);
         uint8_t writeRegister(uint8_t regAddress, uint8_t value);
+        void burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer);
         String identity();
         void initialize();
         String test();
-        float gyroscope();
+        int16_t gyroscope();
         float accelerometer();
         float temperature();
 };

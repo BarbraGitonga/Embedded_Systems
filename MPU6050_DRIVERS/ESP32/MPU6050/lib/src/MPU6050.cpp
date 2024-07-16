@@ -18,6 +18,18 @@ uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
     return Wire.endTransmission(); // Return the status of the transmission
 }
 
+void MPU6050::burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer){
+    Wire.beginTransmission(MPU6050_ID);
+    Wire.write(starting_reg);
+    Wire.endTransmission(true);
+
+    Wire.requestFrom(static_cast<uint8_t>(MPU6050_ID), static_cast<size_t>(bytes), true);
+
+    for(int i=0; i<=bytes; i++) {
+        buffer[i] = Wire.read();
+    }
+}
+
 String MPU6050::identity(){
     Wire.begin();
 
@@ -47,9 +59,9 @@ void MPU6050::initialize(){
         Serial.println("device_found");
         //Reseting device abd signal paths
         writeRegister(PWR_MGMT_1, DEVICE_RESET);
-        delay(100);
+        delay(1000);
         writeRegister(SIGNAL_PATH_RESET, SENSOR_RESET);
-        delay(100);
+        delay(1000);
 
         //setting clock speed and enabling sensors
         writeRegister(PWR_MGMT_1, PWR_VAR_1);
@@ -73,22 +85,36 @@ String MPU6050::test(){
     writeRegister(GYRO_CONFIG, 0x07); // 250dps
     writeRegister(ACCEL_CONFIG, 0x0F); //8g
 
-    uint8_t x_ = readRegister(SELF_TEST_X);
-    uint8_t y = readRegister(SELF_TEST_Y);
-    uint8_t z = readRegister(SELF_TEST_Z);
+    uint8_t x_gyro = readRegister(SELF_TEST_X);
+    uint8_t y_gyro = readRegister(SELF_TEST_Y);
+    uint8_t z_gyro = readRegister(SELF_TEST_Z);
 
     // gyroscope
     return "set";
 }
   
-float MPU6050::gyroscope(){
-
+int16_t MPU6050::gyroscope(){
+    int8_t buffer[6];
+    burstReadRegisters(GYRO_XOUT_H, 6, buffer);
+    int16_t gyro_x_out = (int16_t)((buffer[0] << 8) | buffer[1]);
+    int16_t gyro_y_out = (int16_t)((buffer[0] << 8) | buffer[1]);
+    int16_t gyro_z_out = (int16_t)((buffer[0] << 8) | buffer[1]);
+    Serial.print(gyro_x_out);  Serial.print(gyro_y_out);  Serial.println(gyro_z_out);
+    return gyro_x_out, gyro_y_out, gyro_z_out;
 }   
 
 float MPU6050::accelerometer(){
-
+    float xyz = 0.6;
+    return xyz;
 }
 
 float MPU6050::temperature(){
-    
+    int8_t temp_h = readRegister(TEMP_OUT_H); // high bytes of the temperature
+    int8_t temp_l = readRegister(TEMP_OUT_L); // low bytes of temperature
+    Serial.print("High Byte: "); Serial.println(temp_h, HEX);
+    Serial.print("Low Byte: "); Serial.println(temp_l, HEX);
+    int16_t temp_out = (static_cast<int16_t>(temp_h) << 8) | temp_l; // combined low and high bytes
+    Serial.println(temp_out);
+    float temp_in_degrees_C = (static_cast<float>(temp_out) / 340.0f) + 36.53f; // temperature in degrees
+    return temp_in_degrees_C;
 }

@@ -4,12 +4,14 @@
 MPU6050 MPU;
 void setup(){
     Serial.begin(115200);
+    String deviceID = MPU.identity();
+    Serial.println("Device ID: " + deviceID);
     MPU.initialize();
 }
 
 void loop(){
-    //Serial.println(MPU.identity());
-    String deviceID = MPU.identity();
-    Serial.println("Device ID: " + deviceID);
-    delay(5000);
+    float temp = MPU.temperature();
+    Serial.println(temp);
+    MPU.gyroscope();
+    delay(1000);
 }
