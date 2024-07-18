@@ -1,6 +1,11 @@
 #include "mpu6050.h"
 #include <Wire.h>
-
+/**
+ * @brief 
+ * 
+ * @param regAddress 
+ * @return uint8_t 
+ */
 uint8_t MPU6050::readRegister(uint8_t regAddress){
     Wire.beginTransmission(MPU6050_ID);
     Wire.write(regAddress);
@@ -10,6 +15,13 @@ uint8_t MPU6050::readRegister(uint8_t regAddress){
     return Wire.read();
 }
 
+/**
+ * @brief 
+ * 
+ * @param regAddress 
+ * @param value 
+ * @return uint8_t 
+ */
 uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
     Wire.beginTransmission(MPU6050_ID);
     Wire.write(regAddress);
@@ -18,6 +30,13 @@ uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
     return Wire.endTransmission(); // Return the status of the transmission
 }
 
+/**
+ * @brief 
+ * 
+ * @param starting_reg 
+ * @param bytes 
+ * @param buffer 
+ */
 void MPU6050::burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer){
     Wire.beginTransmission(MPU6050_ID);
     Wire.write(starting_reg);
@@ -31,6 +50,11 @@ void MPU6050::burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer
     }
 }
 
+/**
+ * @brief 
+ * 
+ * @return String 
+ */
 String MPU6050::identity(){
     Wire.begin();
 
@@ -53,19 +77,23 @@ String MPU6050::identity(){
     return "Device not detected";
 }
 
+/**
+ * @brief 
+ * 
+ */
 void MPU6050::initialize(){
     Wire.begin();
     
     if(identity()=="0x68"){
-        Serial.println("device_found");
-        //Reseting device and signal paths
-        writeRegister(PWR_MGMT_1, DEVICE_RESET);
-        delay(1000);
-        writeRegister(SIGNAL_PATH_RESET, SENSOR_RESET);
-        delay(1000);
+        //reseting the device
+        
+        writeRegister(PWR_MGMT_1, 0x00);
+        delay(100);
+        writeRegister(SIGNAL_PATH_RESET, 0xE0);
+        delay(100);
 
         //setting clock speed and enabling sensors
-        writeRegister(PWR_MGMT_1, PWR_VAR_1);
+
         writeRegister(PWR_MGMT_2, 0x00); //enable all sensors
 
         //configuring range of sensors
@@ -93,19 +121,27 @@ String MPU6050::test(){
     // gyroscope
     return "set";
 }
-  
+
+/**
+ * @brief 
+ * 
+ */
 void MPU6050::gyroscope(){
     int8_t buffer[6];
     burstReadRegisters(GYRO_XOUT_H, 6, buffer);
     int16_t gyro_x_out = (int16_t)((buffer[0] << 8) | buffer[1]);
     int16_t gyro_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
     int16_t gyro_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
-    Serial.print("Gyro"); Serial.print(gyro_x_out);  Serial.print(gyro_y_out);  Serial.println(gyro_z_out);
+    Serial.print("Gyro"); Serial.print(gyro_x_out, DEC);  Serial.print(gyro_y_out, DEC);  Serial.println(gyro_z_out, DEC);
 
 
     //return gyro_x_out, gyro_y_out, gyro_z_out;
 }   
 
+/**
+ * @brief 
+ * 
+ */
 void MPU6050::accelerometer(){
     int8_t buffer[6];
     burstReadRegisters(ACCEL_XOUT_H, 6, buffer);
@@ -115,6 +151,11 @@ void MPU6050::accelerometer(){
     Serial.print("Accel"); Serial.print(accel_x_out); Serial.print(accel_y_out); Serial.println(accel_z_out);
 }
 
+/**
+ * @brief 
+ * 
+ * @return float 
+ */
 float MPU6050::temperature(){
     int8_t buffer[2];
     burstReadRegisters(TEMP_OUT_H, 2, buffer);

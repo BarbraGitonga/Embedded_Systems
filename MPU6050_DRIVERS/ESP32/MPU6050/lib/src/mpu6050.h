@@ -47,7 +47,6 @@
 #define GYRO_ZOUT_H         0x47
 #define GYRO_ZOUT_L         0x48
 
-#define PWR_MGMT_1          0x6B
 #define FIFO_COUNTH         0x72
 #define FIFO_COUNTL         0x73
 #define FIFO_R_W            0x74
@@ -58,12 +57,11 @@
 
 //power management 1 params
 #define PWR_MGMT_1          0x6B
-#define DEVICE_RESET        0x01 //soft reset 
-#define PWR_VAR_1           0x84 //x-axis gyroscope, cycle
+#define DEVICE_RESET        0x65 //soft reset 
+#define PWR_VAR_1           0x64 //x-axis gyroscope, cycle
 
 //Power management 2
-#define PWR_MGMT_2          0x6C
-#define LP_WAKE_CTRL        
+#define PWR_MGMT_2          0x6C      
 
 //Signal path reset
 #define SIGNAL_PATH_RESET   0x68
