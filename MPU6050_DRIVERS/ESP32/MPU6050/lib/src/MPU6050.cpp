@@ -3,8 +3,8 @@
 /**
  * @brief 
  * 
- * @param regAddress 
- * @return uint8_t 
+ * @param regAddress - register to read from
+ * @return uint8_t data that has been read by int.
  */
 uint8_t MPU6050::readRegister(uint8_t regAddress){
     Wire.beginTransmission(MPU6050_ID);
@@ -16,10 +16,10 @@ uint8_t MPU6050::readRegister(uint8_t regAddress){
 }
 
 /**
- * @brief 
+ * @brief Writes a specific value to the register given
  * 
- * @param regAddress 
- * @param value 
+ * @param regAddress - register to write to from
+ * @param value  - what to be written into.
  * @return uint8_t 
  */
 uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
@@ -31,10 +31,10 @@ uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
 }
 
 /**
- * @brief 
+ * @brief Reads data from multiple registers at once
  * 
- * @param starting_reg 
- * @param bytes 
+ * @param starting_reg - the first register  to start from
+ * @param bytes - number of  bytes to be gotten starting from the
  * @param buffer 
  */
 void MPU6050::burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer){
@@ -46,12 +46,11 @@ void MPU6050::burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer
 
     for(int i=0; i<bytes; i++) {
         buffer[i] = Wire.read();
-        Serial.println(buffer[i]);
     }
 }
 
 /**
- * @brief 
+ * @brief - identifies the device
  * 
  * @return String 
  */
@@ -78,7 +77,7 @@ String MPU6050::identity(){
 }
 
 /**
- * @brief 
+ * @brief - initialization of the device
  * 
  */
 void MPU6050::initialize(){
@@ -86,14 +85,14 @@ void MPU6050::initialize(){
     
     if(identity()=="0x68"){
         //reseting the device
-        
-        writeRegister(PWR_MGMT_1, 0x00);
+        writeRegister(PWR_MGMT_1, 0x80); //0b100000000
         delay(100);
-        writeRegister(SIGNAL_PATH_RESET, 0xE0);
+
+        writeRegister(SIGNAL_PATH_RESET, 0x07); // reset signal path
         delay(100);
 
         //setting clock speed and enabling sensors
-
+        writeRegister(PWR_MGMT_1, 0x21);
         writeRegister(PWR_MGMT_2, 0x00); //enable all sensors
 
         //configuring range of sensors
@@ -110,16 +109,14 @@ void MPU6050::initialize(){
     }
 }
 
-String MPU6050::test(){
-    writeRegister(GYRO_CONFIG, 0x07); // 250dps
-    writeRegister(ACCEL_CONFIG, 0x0F); //8g
-
-    uint8_t x_gyro = readRegister(SELF_TEST_X);
-    uint8_t y_gyro = readRegister(SELF_TEST_Y);
-    uint8_t z_gyro = readRegister(SELF_TEST_Z);
-
-    // gyroscope
-    return "set";
+void MPU6050::test(){
+    uint8_t xg_test = readRegister(SELF_TEST_X);
+    uint8_t yg_test = readRegister(SELF_TEST_Y);
+    uint8_t zg_test = readRegister(SELF_TEST_Z);
+    
+    Serial.print("Gyro Self Test - X: 0x"); Serial.print(xg_test, HEX);
+    Serial.print(" Y: 0x"); Serial.print(yg_test, HEX);
+    Serial.print(" Z: 0x"); Serial.println(zg_test, HEX);
 }
 
 /**
@@ -129,13 +126,20 @@ String MPU6050::test(){
 void MPU6050::gyroscope(){
     int8_t buffer[6];
     burstReadRegisters(GYRO_XOUT_H, 6, buffer);
+    Serial.println();
     int16_t gyro_x_out = (int16_t)((buffer[0] << 8) | buffer[1]);
     int16_t gyro_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
     int16_t gyro_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
-    Serial.print("Gyro"); Serial.print(gyro_x_out, DEC);  Serial.print(gyro_y_out, DEC);  Serial.println(gyro_z_out, DEC);
+    //Serial.print("Gyro"); Serial.print(gyro_x_out);  Serial.print(gyro_y_out);  Serial.println(gyro_z_out);
 
+    
+    Serial.print("Gyro X: "); Serial.print(gyro_x_out);
+    Serial.print(" Y: "); Serial.print(gyro_y_out);
+    Serial.print(" Z: "); Serial.println(gyro_z_out);
 
-    //return gyro_x_out, gyro_y_out, gyro_z_out;
+    uint8_t gyro_config = readRegister(GYRO_CONFIG);
+    Serial.print("GYRO_CONFIG: 0x");
+    Serial.println(gyro_config, HEX);
 }   
 
 /**

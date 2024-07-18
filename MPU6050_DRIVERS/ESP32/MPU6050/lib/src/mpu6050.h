@@ -75,7 +75,7 @@ class MPU6050{
         void burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer);
         String identity();
         void initialize();
-        String test();
+        void test();
         void gyroscope();
         void accelerometer();
         float temperature();
