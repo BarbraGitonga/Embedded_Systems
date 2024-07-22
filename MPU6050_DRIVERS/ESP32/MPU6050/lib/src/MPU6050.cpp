@@ -123,23 +123,22 @@ void MPU6050::test(){
  * @brief 
  * 
  */
-void MPU6050::gyroscope(){
+void MPU6050::gyroscope(float &x, float &y, float &z){
     int8_t buffer[6];
     burstReadRegisters(GYRO_XOUT_H, 6, buffer);
     Serial.println();
     int16_t gyro_x_out = (int16_t)((buffer[0] << 8) | buffer[1]);
     int16_t gyro_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
     int16_t gyro_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
-    //Serial.print("Gyro"); Serial.print(gyro_x_out);  Serial.print(gyro_y_out);  Serial.println(gyro_z_out);
 
-    
-    Serial.print("Gyro X: "); Serial.print(gyro_x_out);
-    Serial.print(" Y: "); Serial.print(gyro_y_out);
-    Serial.print(" Z: "); Serial.println(gyro_z_out);
+    float scale = 250.0 / 32768.0;
+    x = gyro_x_out * scale;
+    y = gyro_y_out * scale;
+    z = gyro_z_out * scale;
 
-    uint8_t gyro_config = readRegister(GYRO_CONFIG);
-    Serial.print("GYRO_CONFIG: 0x");
-    Serial.println(gyro_config, HEX);
+    Serial.print("Gyro X: "); Serial.print(x);
+    Serial.print(" Y: "); Serial.print(y);
+    Serial.print(" Z: "); Serial.println(z);
 }   
 
 /**

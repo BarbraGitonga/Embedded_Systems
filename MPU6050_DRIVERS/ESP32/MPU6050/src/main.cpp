@@ -1,6 +1,7 @@
 #include "mpu6050.h"
 #include <Arduino.h>
 
+float gx, gy, gz;
 MPU6050 MPU;
 void setup(){
     Serial.begin(115200);
@@ -12,8 +13,7 @@ void setup(){
 void loop(){
     float temp = MPU.temperature();
     Serial.println(temp);
-    MPU.test();
-    MPU.gyroscope();
+    MPU.gyroscope(gx, gy, gz);
     MPU.accelerometer();
     delay(1000);
 }
