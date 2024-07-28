@@ -95,7 +95,7 @@ void MPU6050::initialize(){
         writeRegister(GYRO_CONFIG, 0x00); //full scale range of 250
         writeRegister(ACCEL_CONFIG, 0x00); //full scale range of 2g
 
-        Serial.println("initialized");
+        delay(1000);
     }
     else if(identity_d == "Unknown Device"){
             Serial.println("Unknown Device");
@@ -105,19 +105,45 @@ void MPU6050::initialize(){
     }
 }
 
-void MPU6050::test(){
-    uint8_t xg_test = readRegister(SELF_TEST_X);
-    uint8_t yg_test = readRegister(SELF_TEST_Y);
-    uint8_t zg_test = readRegister(SELF_TEST_Z);
+/**
+ * @brief tests the functioning of the gyroscope and accelerometer
+ * 
+ * @return int 
+ */
+int MPU6050::test(){
+    int8_t gyro_dps = readRegister(GYRO_CONFIG);
     
-    Serial.print("Gyro Self Test - X: 0x"); Serial.print(xg_test, HEX);
-    Serial.print(" Y: 0x"); Serial.print(yg_test, HEX);
-    Serial.print(" Z: 0x"); Serial.println(zg_test, HEX);
+    if(gyro_dps != 0){
+        writeRegister(GYRO_CONFIG, 0x00); // ensures gyroscope is 250dps
+    }
+
+    int8_t test_A = readRegister(SELF_TEST_A);
+    int8_t x_test = readRegister(SELF_TEST_X);
+    int8_t y_test = readRegister(SELF_TEST_Y);
+    int8_t z_test = readRegister(SELF_TEST_Z);
+
+    if (x_test != 0 && y_test != 0 && z_test != 0 && test_A != 0){
+        return 1; // all are funtioning well
+    }
+    else if (x_test == 0 && y_test == 0 && z_test == 0 && test_A == 0){
+        return 2; // none is functioning well
+    }
+    else if (x_test == 0 || y_test == 0 || z_test == 0){
+        return 0; // gyroscope is faulty
+    }
+    else if (test_A == 0){
+        return -1; // accelerometer is faulty
+    }
+    return 3; // control
 }
 
 /**
  * @brief 
  * 
+ * @param x - x-axis orientation
+ * @param y - y-axis orientation
+ * @param z - z -axis orientation
+ * @return * void 
  */
 void MPU6050::gyroscope(float &x, float &y, float &z){
     int8_t buffer[6];
@@ -127,18 +153,20 @@ void MPU6050::gyroscope(float &x, float &y, float &z){
     int16_t gyro_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
     int16_t gyro_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
 
-    float scale = 250.0 / 32768.0; // convert raw values to 
+    float scale = 250.0 / 32768.0; // convert raw values to degrees per second
     x = gyro_x_out * scale;
     y = gyro_y_out * scale;
     z = gyro_z_out * scale;
 }   
 
 /**
- * @brief 
+ * @brief - get acceleration readings
  * 
- * @param x 
- * @param y 
- * @param z 
+ * @param x - x axis acceleration
+ * @param y - y-axix acceleration
+ * @param z - z-axix acceleration
+ * 
+ * @return *void
  */
 void MPU6050::accelerometer(float &x, float &y, float &z){
     int8_t buffer[6];
@@ -155,7 +183,7 @@ void MPU6050::accelerometer(float &x, float &y, float &z){
 }
 
 /**
- * @brief 
+ * @brief - reads temperature values
  * 
  * @return float 
  */

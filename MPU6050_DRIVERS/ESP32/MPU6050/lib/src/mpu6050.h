@@ -19,13 +19,8 @@
 #define SELF_TEST_Z         0x0F
 #define SELF_TEST_A         0x10
 
-#define SMPLRT_DIV          0x19
-
-#define CONFIG              0x1A
 #define GYRO_CONFIG         0x1B
 #define ACCEL_CONFIG        0x1C
-#define FIFO_EN             0x23
-#define I2C_MST_CTRL        0x24
 
 //acceleration readings
 #define ACCEL_XOUT_H        0x3B
@@ -47,25 +42,16 @@
 #define GYRO_ZOUT_H         0x47
 #define GYRO_ZOUT_L         0x48
 
-#define FIFO_COUNTH         0x72
-#define FIFO_COUNTL         0x73
-#define FIFO_R_W            0x74
-
 //identity
 #define WHO_AM_I            0x75
 #define MPU6050_ID          0x68 //default value of who am i register
 
 //power management 1 params
 #define PWR_MGMT_1          0x6B
-#define DEVICE_RESET        0x65 //soft reset 
-#define PWR_VAR_1           0x64 //x-axis gyroscope, cycle
 
 //Power management 2
 #define PWR_MGMT_2          0x6C      
 
-//Signal path reset
-#define SIGNAL_PATH_RESET   0x68
-#define SENSOR_RESET        0xE0
 
 
 class MPU6050{
@@ -75,7 +61,7 @@ class MPU6050{
         void burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer);
         String identity();
         void initialize();
-        void test();
+        int test();
         void gyroscope(float &x, float &y, float &z);
         void accelerometer(float &x, float &y, float &z);
         float temperature();
