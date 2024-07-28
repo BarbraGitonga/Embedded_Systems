@@ -1,7 +1,8 @@
 #include "mpu6050.h"
 #include <Wire.h>
+
 /**
- * @brief 
+ * @brief Reads froma register
  * 
  * @param regAddress - register to read from
  * @return uint8_t data that has been read by int.
@@ -35,7 +36,7 @@ uint8_t MPU6050::writeRegister(uint8_t regAddress, uint8_t value) {
  * 
  * @param starting_reg - the first register  to start from
  * @param bytes - number of  bytes to be gotten starting from the
- * @param buffer 
+ * @param buffer - pass a variable thats your buffer
  */
 void MPU6050::burstReadRegisters(uint8_t starting_reg, int bytes, int8_t* buffer){
     Wire.beginTransmission(MPU6050_ID);
@@ -82,17 +83,12 @@ String MPU6050::identity(){
  */
 void MPU6050::initialize(){
     Wire.begin();
-    
-    if(identity()=="0x68"){
-        //reseting the device
-        writeRegister(PWR_MGMT_1, 0x80); //0b100000000
-        delay(100);
+    String identity_d = identity();
 
-        writeRegister(SIGNAL_PATH_RESET, 0x07); // reset signal path
-        delay(100);
+    if(identity_d=="0x68"){
 
         //setting clock speed and enabling sensors
-        writeRegister(PWR_MGMT_1, 0x21);
+        writeRegister(PWR_MGMT_1, 0x00); //reset the MPU6050
         writeRegister(PWR_MGMT_2, 0x00); //enable all sensors
 
         //configuring range of sensors
@@ -101,7 +97,7 @@ void MPU6050::initialize(){
 
         Serial.println("initialized");
     }
-    else if(identity() == "Unknown Device"){
+    else if(identity_d == "Unknown Device"){
             Serial.println("Unknown Device");
     }
     else {
@@ -131,27 +127,31 @@ void MPU6050::gyroscope(float &x, float &y, float &z){
     int16_t gyro_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
     int16_t gyro_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
 
-    float scale = 250.0 / 32768.0;
+    float scale = 250.0 / 32768.0; // convert raw values to 
     x = gyro_x_out * scale;
     y = gyro_y_out * scale;
     z = gyro_z_out * scale;
-
-    Serial.print("Gyro X: "); Serial.print(x);
-    Serial.print(" Y: "); Serial.print(y);
-    Serial.print(" Z: "); Serial.println(z);
 }   
 
 /**
  * @brief 
  * 
+ * @param x 
+ * @param y 
+ * @param z 
  */
-void MPU6050::accelerometer(){
+void MPU6050::accelerometer(float &x, float &y, float &z){
     int8_t buffer[6];
     burstReadRegisters(ACCEL_XOUT_H, 6, buffer);
     int16_t accel_x_out = (int16_t)((buffer[0] << 8) | buffer[1]);
     int16_t accel_y_out = (int16_t)((buffer[2] << 8) | buffer[3]);
     int16_t accel_z_out = (int16_t)((buffer[4] << 8) | buffer[5]);
-    Serial.print("Accel"); Serial.print(accel_x_out); Serial.print(accel_y_out); Serial.println(accel_z_out);
+
+    float scale = 2.0 / 32768.0;
+    x = accel_x_out * scale;
+    y = accel_x_out * scale;
+    z = accel_x_out * scale;
+    
 }
 
 /**
@@ -163,7 +163,6 @@ float MPU6050::temperature(){
     int8_t buffer[2];
     burstReadRegisters(TEMP_OUT_H, 2, buffer);
     int16_t temp_out = (static_cast<int16_t>(buffer[0]) << 8) | buffer[1]; // combined low and high bytes
-    Serial.print("Temp");  Serial.println(temp_out);
     float temp_in_degrees_C = (static_cast<float>(temp_out) / 340.0f) + 36.53f; // temperature in degrees
     return temp_in_degrees_C;
 }

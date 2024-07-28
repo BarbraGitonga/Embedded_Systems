@@ -77,7 +77,7 @@ class MPU6050{
         void initialize();
         void test();
         void gyroscope(float &x, float &y, float &z);
-        void accelerometer();
+        void accelerometer(float &x, float &y, float &z);
         float temperature();
 };
 
