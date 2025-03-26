@@ -1,3 +1,14 @@
+/**
+ * @file MPU6050.cpp
+ * @author Barbra Gitonga (gitongabarbra@gmail.com)
+ * @brief This is a small MPU6050 driver
+ * @version 0.1
+ * @date 2024-10-22
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
+
 #include "mpu6050.h"
 #include <Wire.h>
 

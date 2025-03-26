@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../../../3D_Scanner"
+		},
+		{
+			"name": "3D_Scanner",
+			"path": "../../../3D_Scanner/3D_Scanner"
+		},
+		{
+			"path": "../ESP32/MPU6050"
+		},
+		{
+			"name": "STM32_MPU6050",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
