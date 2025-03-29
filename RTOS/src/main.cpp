@@ -10,8 +10,6 @@ static const BaseType_t app_cpu = 0;
 static const BaseType_t app_cpu = 1;
 #endif
 
-const char msg[] = "I am making a task scheduler!";
-
 static TaskHandle_t task_1 = NULL;
 static TaskHandle_t task_2 = NULL;
 
