@@ -13,7 +13,7 @@
 
 static const uint8_t buf_len = 255;
 static const uint8_t queue_len = 10;
-static uint8_t timer = 1000;
+static uint32_t timer = 1000;
 
 // Queues to be used
 static QueueHandle_t queue_1; // stores delay variables
@@ -26,64 +26,48 @@ static TaskHandle_t task_B; // monitors Q1 for delay var, blinks LED and keeps t
 //Task A
 void taskA(void *pvParameters){
   static char *data = NULL;
-  int item;
   int c;
   int idx = 0;
-  int idx_cpy = 0;
   char buffer[buf_len] ={0};
-  char first_five[5];
+  char msg_rec[50];
+
+  memset(buffer, 0, buf_len);
 
   // listening to the serial
   while(1){
-  
-    memset(buffer, 0, sizeof(char));
-
-    // Prints values from Q2 to terminal
-    if(xQueueReceive(queue_2, (void *)&timer, 0) == pdTRUE){
-      Serial.println(timer);
+    // Receive and print messages from queue_2 (e.g., "Blinked")
+    if (xQueueReceive(queue_2, msg_rec, 0) == pdTRUE){
+      Serial.println(msg_rec);
     }
 
-    // Monitors serial.
-    if(Serial.available() > 0){
+    // Read serial input
+    if (Serial.available() > 0){
       c = Serial.read();
-      
-      // check if character c is a newline character
-      if(c != '\n'){
+
+      if (c != '\n' && idx < buf_len - 1){
         buffer[idx++] = c;
       }
+      else if (c == '\n'){
+        buffer[idx] = '\0'; // Null-terminate the string
 
-      //store the string from the serial
-      if(c == '\n'){
-        buffer[idx] = '\0'; // adding a null terminator at the end to make it a string.
+        // Echo input
+        Serial.println(buffer);
 
-        data = (char*)pvPortMalloc((idx+1) * sizeof(char)); // creates a dynamic memory for the string in buffer upto the null terminator
-        configASSERT(data); // ensure not NULL
-        memcpy(data, buffer, idx+1); // copy the string onto data.
-
-        memset(buffer, 0, buf_len); // clean the buffer.
-        idx_cpy = idx+1; // total length of the string
-        idx = 0; // reset index
-
-        Serial.println(data);
-      }
-
-      char delay_str[10];
-
-      // check if "delay" is part of the data and if there is an integer that follows it.
-      if(idx_cpy >= 5){
-        strncpy(first_five, data, 5);
-        if (strncmp(data, "delay ", 6) == 0) {
-          timer = atoi(&data[6]);
-          // enter delay value in Q1
-          xQueueSend(queue_1, (void*)&timer, 0);
+        // Check if input starts with "delay "
+        if (strncmp(buffer, "delay ", 6) == 0){
+          char *endptr;
+          int val = strtol(&buffer[6], &endptr, 10);
+          if (endptr != &buffer[6]) {
+            timer = val;
+            xQueueSend(queue_1, &timer, 0);
+          }
         }
-
-        // Free data memory to prevent stack overflow.
-        vPortFree(data);
+        // Reset buffer
+        idx = 0;
+        memset(buffer, 0, buf_len);
       }
     }
   }
-
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
 
@@ -95,25 +79,29 @@ void LED_blink(int freq){
 }
 
 void taskB(void *pvParameters){
+
+  Serial.println("Task B running");
   //Read values from Q2 to get delay value.
-  xQueueReceive(queue_2, (void *) &timer, 0);
   int blink = 0;
-  int interval = 100;
   char msg[] = "Blinked";
 
   while(1){
+    int new_delay;
     // Monitors Q1 and stores values in vairable delay.
+    if(xQueueReceive(queue_1, &new_delay, 0) == pdTRUE){
+      timer = new_delay;
+    }
 
     // toggle the LED
     LED_blink(timer);
     blink++;
 
     // count numner of blinks and send "Blinked" if LED blinks 100 times.
-    if((blink - interval) == 100){
+    if(blink % 100 == 0){
       xQueueSend(queue_2, (void *)msg, 0);
     }
-    
   }
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
 
 void setup() {
@@ -122,8 +110,8 @@ void setup() {
   vTaskDelay(1000 / portTICK_PERIOD_MS);
 
   // Creating the queues
-  queue_1 = xQueueCreate(queue_len, sizeof(int));
-  queue_2 = xQueueCreate(queue_len, sizeof(char) * 10);
+  queue_1 = xQueueCreate(queue_len, sizeof(uint32_t)); // stores value of timer, an integer from task A.
+  queue_2 = xQueueCreate(queue_len, sizeof(char) * 10); //stores "Blinked" message, a string from task B.
 
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -147,7 +135,6 @@ void setup() {
     &task_B,
     app_cpu
   );
-
 }
 
 void loop() {
