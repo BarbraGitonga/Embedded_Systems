@@ -33,3 +33,4 @@ void loop(){
     delay(1000);
 }
 ```
+Read my blog on writing I2C drivers. ![I2C Drivers](https://barbragitonga.vercel.app/blog/mpu6050-i2c-driver).
