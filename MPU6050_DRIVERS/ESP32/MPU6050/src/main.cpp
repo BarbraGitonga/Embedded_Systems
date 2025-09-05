@@ -1,25 +1,157 @@
-#include "mpu6050.h"
-#include <Arduino.h>
+/**
+ * Compass Demo
+ * 
+ * Print heading (in degrees) to attached I2C OLED display. Demonstrate
+ * how to use magnetometer calibration data and convert magnetic heading
+ * to geographic heading.
+ * 
+ * Author: Shawn Hymel
+ * Date: May 5, 14
+ * 
+ * License: 0BSD (https://opensource.org/licenses/0BSD)
+ */
 
-float gx, gy, gz;
-float ax, ay, az;
+#define DEBUG 1
+#define OLED 0
 
-MPU6050 MPU;
-void setup(){
-    Serial.begin(115200);
-    String deviceID = MPU.identity();
-    Serial.println("Device ID: " + deviceID);
-    MPU.initialize();
+#include <Wire.h>
+#include <Adafruit_LIS3MDL.h>
+#include <Adafruit_HMC5883_U.h>
+
+#if OLED
+#include <SFE_MicroOLED.h>
+#endif
+
+// Pins
+const int pin_reset = 8;
+
+// Hard-iron calibration settings
+const float hard_iron[3] = {
+  7.77,  -14.30,  6.88
+};
+
+// Soft-iron calibration settings
+const float soft_iron[3][3] = {
+  { 1.008,  -0.060, 0.010  },
+  { -0.060,  0.890, -0.005  },
+  { 0.010, -0.005,  1.119  }
+};
+
+// Magnetic declination from magnetic-declination.com
+// East is positive ( ), west is negative (-)
+// mag_decl = ( /-)(deg   min/60   sec/3600)
+// Set to 0 to get magnetic heading instead of geo heading
+const float mag_decl = 0.33333;// 0 20' 0" E
+
+// Globals
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+#if OLED
+MicroOLED oled(pin_reset);
+#endif
+ 
+void setup() {
+
+  // Pour some serial
+#if DEBUG
+  Serial.begin(115200);
+  while (!Serial) delay(10);
+  Serial.println("LIS3MDL compass test");
+#endif
+
+  // Initialize magnetometer
+  if (!mag.begin()) {
+#if DEBUG
+    Serial.println("ERROR: Could not find magnetometer");
+#endif
+    while (1) {
+      delay(1000);
+    }
+  }
+
+  // Initialize OLED
+#if OLED
+  delay(100);
+  Wire.begin();
+  oled.begin(0x3D, Wire);
+
+  // Clear display
+  oled.clear(ALL);
+  oled.display();
+  delay(1000);
+  oled.clear(PAGE);
+#endif
 }
 
-void loop(){
-    int tests = MPU.test();
-    Serial.println(tests);
-    float temp = MPU.temperature();
-    Serial.println(temp);
-    MPU.accelerometer(ax, ay, az);
-    Serial.print("Accelerometer: "); Serial.print(ax); Serial.print(ay), Serial.println(az);
-    MPU.gyroscope(gx, gy, gz);
-    Serial.print("Gyroscope: "); Serial.print(gx); Serial.print(gy), Serial.println(gz);
-    delay(1000);
+void loop() {
+
+  static float hi_cal[3];
+  static float heading = 0;
+
+  // Get new sensor event with readings in uTesla
+  sensors_event_t event;
+  mag.getEvent(&event);
+
+  // Put raw magnetometer readings into an array
+  float mag_data[] = {event.magnetic.x,
+                      event.magnetic.y,
+                      event.magnetic.z};
+
+  // Apply hard-iron offsets
+  for (uint8_t i = 0; i < 3; i++) {
+    hi_cal[i] = mag_data[i] - hard_iron[i];
+  }
+
+  // Apply soft-iron scaling
+  for (uint8_t i = 0; i < 3; i++) {
+    mag_data[i] = (soft_iron[i][0] * hi_cal[0]) +
+                  (soft_iron[i][1] * hi_cal[1]) +
+                  (soft_iron[i][2] * hi_cal[2]);
+  }
+
+    // 'Raw' values to match expectation of MOtionCal
+  Serial.print("Raw:");
+  Serial.print("0"); Serial.print(",");
+  Serial.print("0"); Serial.print(",");
+  Serial.print("0"); Serial.print(",");
+  Serial.print("0"); Serial.print(",");
+  Serial.print("0"); Serial.print(",");
+  Serial.print("0"); Serial.print(",");
+  Serial.print(mag_data[0]*10); Serial.print(",");
+  Serial.print(mag_data[1]*10); Serial.print(",");
+  Serial.print(mag_data[2]*10); Serial.println("");
+  // Calculate angle for heading, assuming board is parallel to
+  // the ground and  Y points toward heading.
+  heading = -1 * (atan2(mag_data[1], mag_data[0]) * 180) / M_PI;
+
+  // Apply magnetic declination to convert magnetic heading
+  // to geographic heading
+  heading += mag_decl;
+
+  // Convert heading to 0..360 degrees
+  if (heading < 0) {
+    heading  = 360;
+  }
+
+#if DEBUG
+  // Print calibrated results
+  Serial.print("[");
+  Serial.print(mag_data[0], 1);
+  Serial.print("\t");
+  Serial.print(mag_data[1], 1);
+  Serial.print("\t");
+  Serial.print(mag_data[2], 1);
+  Serial.print("] Heading: ");
+  Serial.println(heading, 2);
+#endif
+
+  // Display heading (rounded) to OLED
+#if OLED
+  oled.clear(PAGE);
+  oled.setFontType(1);
+  oled.setCursor(5, 20);
+  oled.print(int(heading   0.5));
+  oled.display();
+#endif
+
+  delay(100); 
 }
