@@ -1,0 +1,7 @@
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|10e044d0-15ba-4000-91ac-3a396ee64ffc
+C:\Users\lenovo\Documents\PSoC Creator\4.4\Downloads ( 4.4).cylib\Downloads ( 4.4).cyprj|4eb10f90-282c-4e4c-8395-26546ccd6639
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|71deed4a-6255-4cd5-b86c-ab485d8f7253
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|45e16606-240c-48bc-8de2-56cb06236b1d
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|c7232885-6640-40b3-b437-24d86aafd988
+C:\Users\lenovo\Desktop\Embedded_Systems\PSOC\Experiments\Design01.cydsn\Design01.cyprj|36681220-d86c-4e5c-9523-0efb851b840f
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\dev\psoc3\AnalogDevice\PSoC35AnalogDevice.cylib\PSoC35AnalogDevice.cyprj|fc8cfaaf-83aa-434f-966f-66a205077ce5
