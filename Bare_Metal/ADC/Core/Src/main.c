@@ -1,8 +1,12 @@
 #include "stm32f7xx.h"
 
-//AHB : 216MHz
-//APB1 : 54MHz
-//APB2 : 54Mhz
+void Initialize_MCU(void);
+
+#define VREF		3.3f
+#define ADC_RES		4095.0f
+
+volatile uint16_t adc_raw = 0;
+volatile float LDR_V = 0.0f;
 
 void Initialize_MCU(void) /* initialize STM32F767VGT6 MCU */
 {
@@ -52,65 +56,32 @@ void Initialize_MCU(void) /* initialize STM32F767VGT6 MCU */
     SYSCFG->CMPCR = 0x00000001; // enable compensation cell
 }
 
-/* ----- GPIO & EXTI initialization ----- */
-void GPIO_EXTI_Init(void)
-{
-    /* 1) Enable clocks for GPIOI (bit 8) and SYSCFG (bit 14) */
-    RCC->AHB1ENR |= 0x00000100;
-    RCC->APB2ENR |= 0x00004000;
+int main(void){
 
-    /* 2) Configure PI1 as Output (01b) and PI11 as Input (00b) */
-    // PI1 is at bits [3:2], PI11 is at bits [23:22]
-    GPIOI->MODER &= 0xFF3FFFF3;  // Clear both (PI11 becomes input 00b)
-    GPIOI->MODER |= 0x00000004;  // Set PI1 to output (01b)
+	Initialize_MCU();
+	// Initialize pin PA0 as an analog input pin
+	RCC->AHB1ENR |= 0x00000001;
 
-    /* 3) Output settings for PI1 (push-pull, high speed, no pull) */
-    GPIOI->OTYPER  &= 0xFFFFFFFD;
-    GPIOI->OSPEEDR |= 0x0000000C;
-    GPIOI->PUPDR   &= 0xFFFFFFF3;
+	GPIOA->MODER = 0xA8000000;
+	GPIOA->MODER |= 0x00000003;
 
-    /* 4) Configure PI11 with Pull-Down (02b at bits [23:22]) */
-    // Keeps line stable low until button is pressed
-    GPIOI->PUPDR &= 0xFF3FFFFF;
-    GPIOI->PUPDR |= 0x00800000;
+	// Initialize APB2 for the ADC
+	RCC->APB2ENR |= 0x00000400; // 54 mhZ
+	ADC->CCR |= 0x00020000; // 9MHz
 
-    /* 5) Route EXTI11 to Port I in SYSCFG */
-    // EXTICR[2] controls lines 8-11; EXTI11 is bits [15:12]
-    SYSCFG->EXTICR[2] &= 0x00000FFF;  // Clear bits [15:12]
-    SYSCFG->EXTICR[2] |= 0x00008000;  // 0x8 = Port I
+	// Setup single conversion
+	ADC3->CR2 |= 0x00000001;
+	ADC3->SMPR2 |= 0x00000003;
+	ADC3->SQR3 |= 0x00000000;
 
-    /* 6) Configure EXTI Line 11 */
-    EXTI->IMR  |= 0x00000800;         // Unmask line 11 (bit 11)
-    EXTI->RTSR |= 0x00000800;         // Rising-edge trigger (button press)
-    EXTI->FTSR &= 0xFFFFF7FF;         // Disable falling-edge trigger
-    EXTI->PR    = 0x00000800;         // Clear any pending flag
+	while(1){
+		ADC3->CR2 |= 0x40000000;
 
-    /* 7) Enable EXTI15_10 IRQ in NVIC */
-    NVIC_SetPriority(EXTI15_10_IRQn, 2);
-    NVIC_EnableIRQ(EXTI15_10_IRQn);
-}
+		while((ADC3->SR & 0x00000002) == 0); // just wait, empty body
+		adc_raw = ADC3->DR;                   // read once, after
+		LDR_V = (adc_raw * VREF) / ADC_RES;
 
-/* ----- EXTI Line 11 ISR ----- */
-void EXTI15_10_IRQHandler(void)
-{
-    if (EXTI->PR & 0x00000800)        // Check line 11 flag
-    {
-        EXTI->PR = 0x00000800;        // Clear flag (write 1 to clear)
-        GPIOI->ODR ^= 0x00000002;     // Toggle LED on PI1
-    }
-}
+	}
 
-/* ----- main ----- */
-int main(void)
-{
-    Initialize_MCU(); //for now to run safely on default clock
-    GPIO_EXTI_Init();
 
-    // Turn LED off initially
-    GPIOI->BSRR = 0x00020000; // Reset PI1 (bit 17)
-
-    while (1)
-    {
-        /* Idle - interrupt handles the toggling */
-    }
 }
