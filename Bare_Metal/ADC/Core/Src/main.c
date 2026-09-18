@@ -8,7 +8,7 @@ void Initialize_MCU(void);
 volatile uint16_t adc_raw = 0;
 volatile float LDR_V = 0.0f;
 
-void Initialize_MCU(void) /* initialize STM32F767VGT6 MCU */
+void Initialize_MCU(void) /* initialize STM32F746H MCU */
 {
     // (1) Configure the instruction cache and data cache
     SCB_EnableICache(); // enable L1 instruction cache
@@ -35,7 +35,7 @@ void Initialize_MCU(void) /* initialize STM32F767VGT6 MCU */
     while((RCC->CR & 0x02000000) == 0); // wait until PLLRDY = 1
 
     // (4) Configure over-drive
-    // Without over-drive the maximum speed of the STM32F767 is 180MHz
+    // Without over-drive the maximum speed of the STM32F746 is 180MHz
     // Enable over-drive to reach 216MHz --> raises the MCU internal voltage regulator output
 
     RCC->APB1ENR |= 0x10000000; // power module clock(PWREN = 1)
