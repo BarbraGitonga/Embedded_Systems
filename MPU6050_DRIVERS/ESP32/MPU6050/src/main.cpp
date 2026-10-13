@@ -1,25 +1,76 @@
-#include "mpu6050.h"
-#include <Arduino.h>
+#include <Adafruit_SensorLab.h>
+#include <Adafruit_Sensor_Calibration.h>
 
-float gx, gy, gz;
-float ax, ay, az;
+Adafruit_SensorLab lab;
 
-MPU6050 MPU;
-void setup(){
-    Serial.begin(115200);
-    String deviceID = MPU.identity();
-    Serial.println("Device ID: " + deviceID);
-    MPU.initialize();
+Adafruit_Sensor *mag = NULL, *gyro = NULL, *accel = NULL;
+sensors_event_t mag_event, gyro_event, accel_event;
+
+int loopcount = 0;
+
+void setup(void) {
+  Serial.begin(115200);
+  while (!Serial) delay(10);     // will pause Zero, Leonardo, etc until serial console opens
+  
+  Serial.println(F("Sensor Lab - IMU Calibration!"));
+  lab.begin();
+
+  Serial.println("Looking for a magnetometer");
+  mag = lab.getMagnetometer();
+  if (! mag) {
+    Serial.println(F("Could not find a magnetometer, skipping!"));
+  } else {
+    mag->printSensorDetails();
+  }
+  
+  Serial.println("Looking for a gyroscope");
+  gyro = lab.getGyroscope();
+  if (! gyro) {
+    Serial.println(F("Could not find a gyroscope, skipping!"));
+  } else {
+    gyro->printSensorDetails();
+  }
+  
+  Serial.println("Looking for a accelerometer");
+  accel = lab.getAccelerometer();
+  if (! accel) {
+    Serial.println(F("Could not find a accelerometer, skipping!"));
+  } else {
+    accel->printSensorDetails();
+  }
 }
 
-void loop(){
-    int tests = MPU.test();
-    Serial.println(tests);
-    float temp = MPU.temperature();
-    Serial.println(temp);
-    MPU.accelerometer(ax, ay, az);
-    Serial.print("Accelerometer: "); Serial.print(ax); Serial.print(ay), Serial.println(az);
-    MPU.gyroscope(gx, gy, gz);
-    Serial.print("Gyroscope: "); Serial.print(gx); Serial.print(gy), Serial.println(gz);
-    delay(1000);
+void loop() {
+  if (mag && ! mag->getEvent(&mag_event)) {
+    return;
+  }
+  if (gyro && ! gyro->getEvent(&gyro_event)) {
+    return;
+  }
+  if (accel && ! accel->getEvent(&accel_event)) {
+    return;
+  }
+  // 'Raw' values to match expectation of MOtionCal
+  Serial.print("Raw:");
+  Serial.print(int(accel_event.acceleration.x*8192/9.8)); Serial.print(",");
+  Serial.print(int(accel_event.acceleration.y*8192/9.8)); Serial.print(",");
+  Serial.print(int(accel_event.acceleration.z*8192/9.8)); Serial.print(",");
+  Serial.print(int(gyro_event.gyro.x*Adafruit_SensorLab::DEGREES_PER_RADIAN*16)); Serial.print(",");
+  Serial.print(int(gyro_event.gyro.y*Adafruit_SensorLab::DEGREES_PER_RADIAN*16)); Serial.print(",");
+  Serial.print(int(gyro_event.gyro.z*Adafruit_SensorLab::DEGREES_PER_RADIAN*16)); Serial.print(",");
+  Serial.print(int(mag_event.magnetic.x*10)); Serial.print(",");
+  Serial.print(int(mag_event.magnetic.y*10)); Serial.print(",");
+  Serial.print(int(mag_event.magnetic.z*10)); Serial.println("");
+
+  // unified data
+  Serial.print("Uni:");
+  Serial.print(accel_event.acceleration.x); Serial.print(",");
+  Serial.print(accel_event.acceleration.y); Serial.print(",");
+  Serial.print(accel_event.acceleration.z); Serial.print(",");
+  Serial.print(gyro_event.gyro.x, 4); Serial.print(",");
+  Serial.print(gyro_event.gyro.y, 4); Serial.print(",");
+  Serial.print(gyro_event.gyro.z, 4); Serial.print(",");
+  Serial.print(mag_event.magnetic.x); Serial.print(",");
+  Serial.print(mag_event.magnetic.y); Serial.print(",");
+  Serial.print(mag_event.magnetic.z); Serial.println("");
 }

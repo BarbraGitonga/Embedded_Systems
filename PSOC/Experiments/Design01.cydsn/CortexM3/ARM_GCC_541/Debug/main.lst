@@ -1,0 +1,1090 @@
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	__aeabi_i2f
+  20              		.global	__aeabi_fdiv
+  21              		.global	__aeabi_f2d
+  22              		.section	.text.main,"ax",%progbits
+  23              		.align	2
+  24              		.global	main
+  25              		.thumb
+  26              		.thumb_func
+  27              		.type	main, %function
+  28              	main:
+  29              	.LFB64:
+  30              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  * Copyright YOUR COMPANY, THE YEAR
+   4:main.c        ****  * All Rights Reserved
+   5:main.c        ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:main.c        ****  *
+   7:main.c        ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:main.c        ****  * WHICH IS THE PROPERTY OF your company.
+   9:main.c        ****  *
+  10:main.c        ****  * ========================================
+  11:main.c        **** */
+  12:main.c        **** #include <project.h>
+  13:main.c        **** #include <stdio.h>
+  14:main.c        **** #include <math.h>
+  15:main.c        **** 
+  16:main.c        **** int main(void)
+  17:main.c        **** {
+  31              		.loc 1 17 0
+  32              		.cfi_startproc
+  33              		@ args = 0, pretend = 0, frame = 64
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35 0000 10B5     		push	{r4, lr}
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 4, -8
+  38              		.cfi_offset 14, -4
+  39 0002 92B0     		sub	sp, sp, #72
+  40              		.cfi_def_cfa_offset 80
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 2
+
+
+  18:main.c        ****     CyGlobalIntEnable;
+  41              		.loc 1 18 0
+  42              		.syntax unified
+  43              	@ 18 "main.c" 1
+  44 0004 62B6     		CPSIE   i
+  45              	@ 0 "" 2
+  19:main.c        ****     ADC_SAR_1_Start();
+  46              		.loc 1 19 0
+  47              		.thumb
+  48              		.syntax unified
+  49 0006 FFF7FEFF 		bl	ADC_SAR_1_Start
+  50              	.LVL0:
+  20:main.c        ****     ADC_SAR_1_StartConvert();
+  51              		.loc 1 20 0
+  52 000a FFF7FEFF 		bl	ADC_SAR_1_StartConvert
+  53              	.LVL1:
+  21:main.c        **** 
+  22:main.c        ****     USBUART_1_Start(0, USBUART_1_5V_OPERATION);
+  54              		.loc 1 22 0
+  55 000e 0121     		movs	r1, #1
+  56 0010 0020     		movs	r0, #0
+  57 0012 FFF7FEFF 		bl	USBUART_1_Start
+  58              	.LVL2:
+  59              	.L2:
+  23:main.c        **** 
+  24:main.c        ****     // Wait for connection
+  25:main.c        ****     while(!USBUART_1_GetConfiguration()) { }
+  60              		.loc 1 25 0 discriminator 1
+  61 0016 FFF7FEFF 		bl	USBUART_1_GetConfiguration
+  62              	.LVL3:
+  63 001a 0028     		cmp	r0, #0
+  64 001c FBD0     		beq	.L2
+  26:main.c        ****     USBUART_1_CDC_Init();
+  65              		.loc 1 26 0
+  66 001e FFF7FEFF 		bl	USBUART_1_CDC_Init
+  67              	.LVL4:
+  68              	.L4:
+  69              	.LBB2:
+  27:main.c        **** 
+  28:main.c        ****     for(;;)
+  29:main.c        ****     {
+  30:main.c        ****         // Read LDR voltage
+  31:main.c        ****         ADC_SAR_1_IsEndConversion(ADC_SAR_1_WAIT_FOR_RESULT);
+  70              		.loc 1 31 0
+  71 0022 0020     		movs	r0, #0
+  72 0024 FFF7FEFF 		bl	ADC_SAR_1_IsEndConversion
+  73              	.LVL5:
+  32:main.c        ****         int16 adcResult = ADC_SAR_1_GetResult16();
+  74              		.loc 1 32 0
+  75 0028 FFF7FEFF 		bl	ADC_SAR_1_GetResult16
+  76              	.LVL6:
+  77 002c 0446     		mov	r4, r0
+  78              	.LVL7:
+  33:main.c        **** 
+  34:main.c        ****         int16 mv = ADC_SAR_1_CountsTo_mVolts(adcResult);
+  79              		.loc 1 34 0
+  80 002e FFF7FEFF 		bl	ADC_SAR_1_CountsTo_mVolts
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 3
+
+
+  81              	.LVL8:
+  35:main.c        ****         float voltage = mv / 1000.0f;
+  82              		.loc 1 35 0
+  83 0032 FFF7FEFF 		bl	__aeabi_i2f
+  84              	.LVL9:
+  85 0036 0D49     		ldr	r1, .L6
+  86 0038 FFF7FEFF 		bl	__aeabi_fdiv
+  87              	.LVL10:
+  36:main.c        **** 
+  37:main.c        **** 
+  38:main.c        ****         // Prepare message
+  39:main.c        ****         char msg[60];
+  40:main.c        ****         sprintf(msg, "ADC counts: %d, Voltage: %.2f V\r\n", adcResult, voltage);
+  88              		.loc 1 40 0
+  89 003c FFF7FEFF 		bl	__aeabi_f2d
+  90              	.LVL11:
+  91 0040 CDE90001 		strd	r0, [sp]
+  92 0044 2246     		mov	r2, r4
+  93 0046 0A49     		ldr	r1, .L6+4
+  94 0048 03A8     		add	r0, sp, #12
+  95 004a FFF7FEFF 		bl	sprintf
+  96              	.LVL12:
+  41:main.c        **** 
+  42:main.c        **** 
+  43:main.c        ****         // Send via USB
+  44:main.c        ****         if(USBUART_1_CDCIsReady())
+  97              		.loc 1 44 0
+  98 004e FFF7FEFF 		bl	USBUART_1_CDCIsReady
+  99              	.LVL13:
+ 100 0052 30B1     		cbz	r0, .L3
+  45:main.c        ****         {
+  46:main.c        ****             USBUART_1_PutData((uint8*)msg, strlen(msg));
+ 101              		.loc 1 46 0
+ 102 0054 03A8     		add	r0, sp, #12
+ 103 0056 FFF7FEFF 		bl	strlen
+ 104              	.LVL14:
+ 105 005a 81B2     		uxth	r1, r0
+ 106 005c 03A8     		add	r0, sp, #12
+ 107 005e FFF7FEFF 		bl	USBUART_1_PutData
+ 108              	.LVL15:
+ 109              	.L3:
+  47:main.c        ****         }
+  48:main.c        **** 
+  49:main.c        ****         CyDelay(500);
+ 110              		.loc 1 49 0
+ 111 0062 4FF4FA70 		mov	r0, #500
+ 112 0066 FFF7FEFF 		bl	CyDelay
+ 113              	.LVL16:
+ 114              	.LBE2:
+  50:main.c        ****     }
+ 115              		.loc 1 50 0
+ 116 006a DAE7     		b	.L4
+ 117              	.L7:
+ 118              		.align	2
+ 119              	.L6:
+ 120 006c 00007A44 		.word	1148846080
+ 121 0070 00000000 		.word	.LC0
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 4
+
+
+ 122              		.cfi_endproc
+ 123              	.LFE64:
+ 124              		.size	main, .-main
+ 125              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 126              		.align	2
+ 127              	.LC0:
+ 128 0000 41444320 		.ascii	"ADC counts: %d, Voltage: %.2f V\015\012\000"
+ 128      636F756E 
+ 128      74733A20 
+ 128      25642C20 
+ 128      566F6C74 
+ 129              		.text
+ 130              	.Letext0:
+ 131              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 132              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 133              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 134              		.file 5 "Generated_Source\\PSoC5/ADC_SAR_1.h"
+ 135              		.file 6 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 136              		.file 7 "Generated_Source\\PSoC5/USBUART_1_cdc.h"
+ 137              		.file 8 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 138              		.file 9 "Generated_Source\\PSoC5/CyLib.h"
+ 139              		.file 10 "Generated_Source\\PSoC5/USBUART_1.h"
+ 140              		.file 11 "Generated_Source\\PSoC5/core_cm3.h"
+ 141              		.section	.debug_info,"",%progbits
+ 142              	.Ldebug_info0:
+ 143 0000 A0020000 		.4byte	0x2a0
+ 144 0004 0400     		.2byte	0x4
+ 145 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 146 000a 04       		.byte	0x4
+ 147 000b 01       		.uleb128 0x1
+ 148 000c D6000000 		.4byte	.LASF33
+ 149 0010 0C       		.byte	0xc
+ 150 0011 36020000 		.4byte	.LASF34
+ 151 0015 00000000 		.4byte	.LASF35
+ 152 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 153 001d 00000000 		.4byte	0
+ 154 0021 00000000 		.4byte	.Ldebug_line0
+ 155 0025 02       		.uleb128 0x2
+ 156 0026 01       		.byte	0x1
+ 157 0027 06       		.byte	0x6
+ 158 0028 8C020000 		.4byte	.LASF0
+ 159 002c 02       		.uleb128 0x2
+ 160 002d 01       		.byte	0x1
+ 161 002e 08       		.byte	0x8
+ 162 002f C8000000 		.4byte	.LASF1
+ 163 0033 02       		.uleb128 0x2
+ 164 0034 02       		.byte	0x2
+ 165 0035 05       		.byte	0x5
+ 166 0036 42020000 		.4byte	.LASF2
+ 167 003a 02       		.uleb128 0x2
+ 168 003b 02       		.byte	0x2
+ 169 003c 07       		.byte	0x7
+ 170 003d 6E000000 		.4byte	.LASF3
+ 171 0041 03       		.uleb128 0x3
+ 172 0042 64000000 		.4byte	.LASF9
+ 173 0046 02       		.byte	0x2
+ 174 0047 3F       		.byte	0x3f
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 5
+
+
+ 175 0048 4C000000 		.4byte	0x4c
+ 176 004c 02       		.uleb128 0x2
+ 177 004d 04       		.byte	0x4
+ 178 004e 05       		.byte	0x5
+ 179 004f 77020000 		.4byte	.LASF4
+ 180 0053 02       		.uleb128 0x2
+ 181 0054 04       		.byte	0x4
+ 182 0055 07       		.byte	0x7
+ 183 0056 6A010000 		.4byte	.LASF5
+ 184 005a 02       		.uleb128 0x2
+ 185 005b 08       		.byte	0x8
+ 186 005c 05       		.byte	0x5
+ 187 005d 28020000 		.4byte	.LASF6
+ 188 0061 02       		.uleb128 0x2
+ 189 0062 08       		.byte	0x8
+ 190 0063 07       		.byte	0x7
+ 191 0064 E0010000 		.4byte	.LASF7
+ 192 0068 04       		.uleb128 0x4
+ 193 0069 04       		.byte	0x4
+ 194 006a 05       		.byte	0x5
+ 195 006b 696E7400 		.ascii	"int\000"
+ 196 006f 02       		.uleb128 0x2
+ 197 0070 04       		.byte	0x4
+ 198 0071 07       		.byte	0x7
+ 199 0072 9B000000 		.4byte	.LASF8
+ 200 0076 03       		.uleb128 0x3
+ 201 0077 01020000 		.4byte	.LASF10
+ 202 007b 03       		.byte	0x3
+ 203 007c 2C       		.byte	0x2c
+ 204 007d 41000000 		.4byte	0x41
+ 205 0081 05       		.uleb128 0x5
+ 206 0082 4C020000 		.4byte	.LASF11
+ 207 0086 04       		.byte	0x4
+ 208 0087 E901     		.2byte	0x1e9
+ 209 0089 2C000000 		.4byte	0x2c
+ 210 008d 05       		.uleb128 0x5
+ 211 008e 64010000 		.4byte	.LASF12
+ 212 0092 04       		.byte	0x4
+ 213 0093 ED01     		.2byte	0x1ed
+ 214 0095 33000000 		.4byte	0x33
+ 215 0099 02       		.uleb128 0x2
+ 216 009a 04       		.byte	0x4
+ 217 009b 04       		.byte	0x4
+ 218 009c A8000000 		.4byte	.LASF13
+ 219 00a0 02       		.uleb128 0x2
+ 220 00a1 08       		.byte	0x8
+ 221 00a2 04       		.byte	0x4
+ 222 00a3 A8010000 		.4byte	.LASF14
+ 223 00a7 02       		.uleb128 0x2
+ 224 00a8 01       		.byte	0x1
+ 225 00a9 08       		.byte	0x8
+ 226 00aa 3D020000 		.4byte	.LASF15
+ 227 00ae 02       		.uleb128 0x2
+ 228 00af 08       		.byte	0x8
+ 229 00b0 04       		.byte	0x4
+ 230 00b1 80020000 		.4byte	.LASF16
+ 231 00b5 02       		.uleb128 0x2
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 6
+
+
+ 232 00b6 04       		.byte	0x4
+ 233 00b7 07       		.byte	0x7
+ 234 00b8 09020000 		.4byte	.LASF17
+ 235 00bc 06       		.uleb128 0x6
+ 236 00bd C1010000 		.4byte	.LASF36
+ 237 00c1 01       		.byte	0x1
+ 238 00c2 10       		.byte	0x10
+ 239 00c3 68000000 		.4byte	0x68
+ 240 00c7 00000000 		.4byte	.LFB64
+ 241 00cb 74000000 		.4byte	.LFE64-.LFB64
+ 242 00cf 01       		.uleb128 0x1
+ 243 00d0 9C       		.byte	0x9c
+ 244 00d1 F1010000 		.4byte	0x1f1
+ 245 00d5 07       		.uleb128 0x7
+ 246 00d6 22000000 		.4byte	.LBB2
+ 247 00da 48000000 		.4byte	.LBE2-.LBB2
+ 248 00de B4010000 		.4byte	0x1b4
+ 249 00e2 08       		.uleb128 0x8
+ 250 00e3 F7010000 		.4byte	.LASF18
+ 251 00e7 01       		.byte	0x1
+ 252 00e8 20       		.byte	0x20
+ 253 00e9 8D000000 		.4byte	0x8d
+ 254 00ed 01       		.uleb128 0x1
+ 255 00ee 54       		.byte	0x54
+ 256 00ef 09       		.uleb128 0x9
+ 257 00f0 6D7600   		.ascii	"mv\000"
+ 258 00f3 01       		.byte	0x1
+ 259 00f4 22       		.byte	0x22
+ 260 00f5 8D000000 		.4byte	0x8d
+ 261 00f9 00000000 		.4byte	.LLST0
+ 262 00fd 0A       		.uleb128 0xa
+ 263 00fe 93010000 		.4byte	.LASF19
+ 264 0102 01       		.byte	0x1
+ 265 0103 23       		.byte	0x23
+ 266 0104 99000000 		.4byte	0x99
+ 267 0108 13000000 		.4byte	.LLST1
+ 268 010c 0B       		.uleb128 0xb
+ 269 010d 6D736700 		.ascii	"msg\000"
+ 270 0111 01       		.byte	0x1
+ 271 0112 27       		.byte	0x27
+ 272 0113 F1010000 		.4byte	0x1f1
+ 273 0117 03       		.uleb128 0x3
+ 274 0118 91       		.byte	0x91
+ 275 0119 BC7F     		.sleb128 -68
+ 276 011b 0C       		.uleb128 0xc
+ 277 011c 28000000 		.4byte	.LVL5
+ 278 0120 12020000 		.4byte	0x212
+ 279 0124 2E010000 		.4byte	0x12e
+ 280 0128 0D       		.uleb128 0xd
+ 281 0129 01       		.uleb128 0x1
+ 282 012a 50       		.byte	0x50
+ 283 012b 01       		.uleb128 0x1
+ 284 012c 30       		.byte	0x30
+ 285 012d 00       		.byte	0
+ 286 012e 0E       		.uleb128 0xe
+ 287 012f 2C000000 		.4byte	.LVL6
+ 288 0133 1D020000 		.4byte	0x21d
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 7
+
+
+ 289 0137 0C       		.uleb128 0xc
+ 290 0138 32000000 		.4byte	.LVL8
+ 291 013c 28020000 		.4byte	0x228
+ 292 0140 4B010000 		.4byte	0x14b
+ 293 0144 0D       		.uleb128 0xd
+ 294 0145 01       		.uleb128 0x1
+ 295 0146 50       		.byte	0x50
+ 296 0147 02       		.uleb128 0x2
+ 297 0148 74       		.byte	0x74
+ 298 0149 00       		.sleb128 0
+ 299 014a 00       		.byte	0
+ 300 014b 0C       		.uleb128 0xc
+ 301 014c 4E000000 		.4byte	.LVL12
+ 302 0150 33020000 		.4byte	0x233
+ 303 0154 6F010000 		.4byte	0x16f
+ 304 0158 0D       		.uleb128 0xd
+ 305 0159 01       		.uleb128 0x1
+ 306 015a 50       		.byte	0x50
+ 307 015b 03       		.uleb128 0x3
+ 308 015c 91       		.byte	0x91
+ 309 015d BC7F     		.sleb128 -68
+ 310 015f 0D       		.uleb128 0xd
+ 311 0160 01       		.uleb128 0x1
+ 312 0161 51       		.byte	0x51
+ 313 0162 05       		.uleb128 0x5
+ 314 0163 03       		.byte	0x3
+ 315 0164 00000000 		.4byte	.LC0
+ 316 0168 0D       		.uleb128 0xd
+ 317 0169 01       		.uleb128 0x1
+ 318 016a 52       		.byte	0x52
+ 319 016b 02       		.uleb128 0x2
+ 320 016c 74       		.byte	0x74
+ 321 016d 00       		.sleb128 0
+ 322 016e 00       		.byte	0
+ 323 016f 0E       		.uleb128 0xe
+ 324 0170 52000000 		.4byte	.LVL13
+ 325 0174 3E020000 		.4byte	0x23e
+ 326 0178 0C       		.uleb128 0xc
+ 327 0179 5A000000 		.4byte	.LVL14
+ 328 017d 49020000 		.4byte	0x249
+ 329 0181 8D010000 		.4byte	0x18d
+ 330 0185 0D       		.uleb128 0xd
+ 331 0186 01       		.uleb128 0x1
+ 332 0187 50       		.byte	0x50
+ 333 0188 03       		.uleb128 0x3
+ 334 0189 91       		.byte	0x91
+ 335 018a BC7F     		.sleb128 -68
+ 336 018c 00       		.byte	0
+ 337 018d 0C       		.uleb128 0xc
+ 338 018e 62000000 		.4byte	.LVL15
+ 339 0192 54020000 		.4byte	0x254
+ 340 0196 A2010000 		.4byte	0x1a2
+ 341 019a 0D       		.uleb128 0xd
+ 342 019b 01       		.uleb128 0x1
+ 343 019c 50       		.byte	0x50
+ 344 019d 03       		.uleb128 0x3
+ 345 019e 91       		.byte	0x91
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 8
+
+
+ 346 019f BC7F     		.sleb128 -68
+ 347 01a1 00       		.byte	0
+ 348 01a2 0F       		.uleb128 0xf
+ 349 01a3 6A000000 		.4byte	.LVL16
+ 350 01a7 5F020000 		.4byte	0x25f
+ 351 01ab 0D       		.uleb128 0xd
+ 352 01ac 01       		.uleb128 0x1
+ 353 01ad 50       		.byte	0x50
+ 354 01ae 03       		.uleb128 0x3
+ 355 01af 0A       		.byte	0xa
+ 356 01b0 F401     		.2byte	0x1f4
+ 357 01b2 00       		.byte	0
+ 358 01b3 00       		.byte	0
+ 359 01b4 0E       		.uleb128 0xe
+ 360 01b5 0A000000 		.4byte	.LVL0
+ 361 01b9 6A020000 		.4byte	0x26a
+ 362 01bd 0E       		.uleb128 0xe
+ 363 01be 0E000000 		.4byte	.LVL1
+ 364 01c2 75020000 		.4byte	0x275
+ 365 01c6 0C       		.uleb128 0xc
+ 366 01c7 16000000 		.4byte	.LVL2
+ 367 01cb 80020000 		.4byte	0x280
+ 368 01cf DE010000 		.4byte	0x1de
+ 369 01d3 0D       		.uleb128 0xd
+ 370 01d4 01       		.uleb128 0x1
+ 371 01d5 50       		.byte	0x50
+ 372 01d6 01       		.uleb128 0x1
+ 373 01d7 30       		.byte	0x30
+ 374 01d8 0D       		.uleb128 0xd
+ 375 01d9 01       		.uleb128 0x1
+ 376 01da 51       		.byte	0x51
+ 377 01db 01       		.uleb128 0x1
+ 378 01dc 31       		.byte	0x31
+ 379 01dd 00       		.byte	0
+ 380 01de 0E       		.uleb128 0xe
+ 381 01df 1A000000 		.4byte	.LVL3
+ 382 01e3 8C020000 		.4byte	0x28c
+ 383 01e7 0E       		.uleb128 0xe
+ 384 01e8 22000000 		.4byte	.LVL4
+ 385 01ec 98020000 		.4byte	0x298
+ 386 01f0 00       		.byte	0
+ 387 01f1 10       		.uleb128 0x10
+ 388 01f2 A7000000 		.4byte	0xa7
+ 389 01f6 01020000 		.4byte	0x201
+ 390 01fa 11       		.uleb128 0x11
+ 391 01fb B5000000 		.4byte	0xb5
+ 392 01ff 3B       		.byte	0x3b
+ 393 0200 00       		.byte	0
+ 394 0201 12       		.uleb128 0x12
+ 395 0202 9B010000 		.4byte	.LASF37
+ 396 0206 0B       		.byte	0xb
+ 397 0207 1207     		.2byte	0x712
+ 398 0209 0D020000 		.4byte	0x20d
+ 399 020d 13       		.uleb128 0x13
+ 400 020e 76000000 		.4byte	0x76
+ 401 0212 14       		.uleb128 0x14
+ 402 0213 AE000000 		.4byte	.LASF20
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 9
+
+
+ 403 0217 AE000000 		.4byte	.LASF20
+ 404 021b 05       		.byte	0x5
+ 405 021c 39       		.byte	0x39
+ 406 021d 14       		.uleb128 0x14
+ 407 021e 12020000 		.4byte	.LASF21
+ 408 0222 12020000 		.4byte	.LASF21
+ 409 0226 05       		.byte	0x5
+ 410 0227 3B       		.byte	0x3b
+ 411 0228 14       		.uleb128 0x14
+ 412 0229 81000000 		.4byte	.LASF22
+ 413 022d 81000000 		.4byte	.LASF22
+ 414 0231 05       		.byte	0x5
+ 415 0232 3F       		.byte	0x3f
+ 416 0233 14       		.uleb128 0x14
+ 417 0234 A8020000 		.4byte	.LASF23
+ 418 0238 A8020000 		.4byte	.LASF23
+ 419 023c 06       		.byte	0x6
+ 420 023d E7       		.byte	0xe7
+ 421 023e 14       		.uleb128 0x14
+ 422 023f 62020000 		.4byte	.LASF24
+ 423 0243 62020000 		.4byte	.LASF24
+ 424 0247 07       		.byte	0x7
+ 425 0248 28       		.byte	0x28
+ 426 0249 14       		.uleb128 0x14
+ 427 024a D9010000 		.4byte	.LASF25
+ 428 024e D9010000 		.4byte	.LASF25
+ 429 0252 08       		.byte	0x8
+ 430 0253 21       		.byte	0x21
+ 431 0254 14       		.uleb128 0x14
+ 432 0255 AF010000 		.4byte	.LASF26
+ 433 0259 AF010000 		.4byte	.LASF26
+ 434 025d 07       		.byte	0x7
+ 435 025e 23       		.byte	0x23
+ 436 025f 14       		.uleb128 0x14
+ 437 0260 B0020000 		.4byte	.LASF27
+ 438 0264 B0020000 		.4byte	.LASF27
+ 439 0268 09       		.byte	0x9
+ 440 0269 76       		.byte	0x76
+ 441 026a 14       		.uleb128 0x14
+ 442 026b 98020000 		.4byte	.LASF28
+ 443 026f 98020000 		.4byte	.LASF28
+ 444 0273 05       		.byte	0x5
+ 445 0274 34       		.byte	0x34
+ 446 0275 14       		.uleb128 0x14
+ 447 0276 7C010000 		.4byte	.LASF29
+ 448 027a 7C010000 		.4byte	.LASF29
+ 449 027e 05       		.byte	0x5
+ 450 027f D1       		.byte	0xd1
+ 451 0280 15       		.uleb128 0x15
+ 452 0281 52020000 		.4byte	.LASF30
+ 453 0285 52020000 		.4byte	.LASF30
+ 454 0289 0A       		.byte	0xa
+ 455 028a 2A01     		.2byte	0x12a
+ 456 028c 15       		.uleb128 0x15
+ 457 028d 49000000 		.4byte	.LASF31
+ 458 0291 49000000 		.4byte	.LASF31
+ 459 0295 0A       		.byte	0xa
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 10
+
+
+ 460 0296 2D01     		.2byte	0x12d
+ 461 0298 14       		.uleb128 0x14
+ 462 0299 C6010000 		.4byte	.LASF32
+ 463 029d C6010000 		.4byte	.LASF32
+ 464 02a1 07       		.byte	0x7
+ 465 02a2 22       		.byte	0x22
+ 466 02a3 00       		.byte	0
+ 467              		.section	.debug_abbrev,"",%progbits
+ 468              	.Ldebug_abbrev0:
+ 469 0000 01       		.uleb128 0x1
+ 470 0001 11       		.uleb128 0x11
+ 471 0002 01       		.byte	0x1
+ 472 0003 25       		.uleb128 0x25
+ 473 0004 0E       		.uleb128 0xe
+ 474 0005 13       		.uleb128 0x13
+ 475 0006 0B       		.uleb128 0xb
+ 476 0007 03       		.uleb128 0x3
+ 477 0008 0E       		.uleb128 0xe
+ 478 0009 1B       		.uleb128 0x1b
+ 479 000a 0E       		.uleb128 0xe
+ 480 000b 55       		.uleb128 0x55
+ 481 000c 17       		.uleb128 0x17
+ 482 000d 11       		.uleb128 0x11
+ 483 000e 01       		.uleb128 0x1
+ 484 000f 10       		.uleb128 0x10
+ 485 0010 17       		.uleb128 0x17
+ 486 0011 00       		.byte	0
+ 487 0012 00       		.byte	0
+ 488 0013 02       		.uleb128 0x2
+ 489 0014 24       		.uleb128 0x24
+ 490 0015 00       		.byte	0
+ 491 0016 0B       		.uleb128 0xb
+ 492 0017 0B       		.uleb128 0xb
+ 493 0018 3E       		.uleb128 0x3e
+ 494 0019 0B       		.uleb128 0xb
+ 495 001a 03       		.uleb128 0x3
+ 496 001b 0E       		.uleb128 0xe
+ 497 001c 00       		.byte	0
+ 498 001d 00       		.byte	0
+ 499 001e 03       		.uleb128 0x3
+ 500 001f 16       		.uleb128 0x16
+ 501 0020 00       		.byte	0
+ 502 0021 03       		.uleb128 0x3
+ 503 0022 0E       		.uleb128 0xe
+ 504 0023 3A       		.uleb128 0x3a
+ 505 0024 0B       		.uleb128 0xb
+ 506 0025 3B       		.uleb128 0x3b
+ 507 0026 0B       		.uleb128 0xb
+ 508 0027 49       		.uleb128 0x49
+ 509 0028 13       		.uleb128 0x13
+ 510 0029 00       		.byte	0
+ 511 002a 00       		.byte	0
+ 512 002b 04       		.uleb128 0x4
+ 513 002c 24       		.uleb128 0x24
+ 514 002d 00       		.byte	0
+ 515 002e 0B       		.uleb128 0xb
+ 516 002f 0B       		.uleb128 0xb
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 11
+
+
+ 517 0030 3E       		.uleb128 0x3e
+ 518 0031 0B       		.uleb128 0xb
+ 519 0032 03       		.uleb128 0x3
+ 520 0033 08       		.uleb128 0x8
+ 521 0034 00       		.byte	0
+ 522 0035 00       		.byte	0
+ 523 0036 05       		.uleb128 0x5
+ 524 0037 16       		.uleb128 0x16
+ 525 0038 00       		.byte	0
+ 526 0039 03       		.uleb128 0x3
+ 527 003a 0E       		.uleb128 0xe
+ 528 003b 3A       		.uleb128 0x3a
+ 529 003c 0B       		.uleb128 0xb
+ 530 003d 3B       		.uleb128 0x3b
+ 531 003e 05       		.uleb128 0x5
+ 532 003f 49       		.uleb128 0x49
+ 533 0040 13       		.uleb128 0x13
+ 534 0041 00       		.byte	0
+ 535 0042 00       		.byte	0
+ 536 0043 06       		.uleb128 0x6
+ 537 0044 2E       		.uleb128 0x2e
+ 538 0045 01       		.byte	0x1
+ 539 0046 3F       		.uleb128 0x3f
+ 540 0047 19       		.uleb128 0x19
+ 541 0048 03       		.uleb128 0x3
+ 542 0049 0E       		.uleb128 0xe
+ 543 004a 3A       		.uleb128 0x3a
+ 544 004b 0B       		.uleb128 0xb
+ 545 004c 3B       		.uleb128 0x3b
+ 546 004d 0B       		.uleb128 0xb
+ 547 004e 27       		.uleb128 0x27
+ 548 004f 19       		.uleb128 0x19
+ 549 0050 49       		.uleb128 0x49
+ 550 0051 13       		.uleb128 0x13
+ 551 0052 8701     		.uleb128 0x87
+ 552 0054 19       		.uleb128 0x19
+ 553 0055 11       		.uleb128 0x11
+ 554 0056 01       		.uleb128 0x1
+ 555 0057 12       		.uleb128 0x12
+ 556 0058 06       		.uleb128 0x6
+ 557 0059 40       		.uleb128 0x40
+ 558 005a 18       		.uleb128 0x18
+ 559 005b 9642     		.uleb128 0x2116
+ 560 005d 19       		.uleb128 0x19
+ 561 005e 01       		.uleb128 0x1
+ 562 005f 13       		.uleb128 0x13
+ 563 0060 00       		.byte	0
+ 564 0061 00       		.byte	0
+ 565 0062 07       		.uleb128 0x7
+ 566 0063 0B       		.uleb128 0xb
+ 567 0064 01       		.byte	0x1
+ 568 0065 11       		.uleb128 0x11
+ 569 0066 01       		.uleb128 0x1
+ 570 0067 12       		.uleb128 0x12
+ 571 0068 06       		.uleb128 0x6
+ 572 0069 01       		.uleb128 0x1
+ 573 006a 13       		.uleb128 0x13
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 12
+
+
+ 574 006b 00       		.byte	0
+ 575 006c 00       		.byte	0
+ 576 006d 08       		.uleb128 0x8
+ 577 006e 34       		.uleb128 0x34
+ 578 006f 00       		.byte	0
+ 579 0070 03       		.uleb128 0x3
+ 580 0071 0E       		.uleb128 0xe
+ 581 0072 3A       		.uleb128 0x3a
+ 582 0073 0B       		.uleb128 0xb
+ 583 0074 3B       		.uleb128 0x3b
+ 584 0075 0B       		.uleb128 0xb
+ 585 0076 49       		.uleb128 0x49
+ 586 0077 13       		.uleb128 0x13
+ 587 0078 02       		.uleb128 0x2
+ 588 0079 18       		.uleb128 0x18
+ 589 007a 00       		.byte	0
+ 590 007b 00       		.byte	0
+ 591 007c 09       		.uleb128 0x9
+ 592 007d 34       		.uleb128 0x34
+ 593 007e 00       		.byte	0
+ 594 007f 03       		.uleb128 0x3
+ 595 0080 08       		.uleb128 0x8
+ 596 0081 3A       		.uleb128 0x3a
+ 597 0082 0B       		.uleb128 0xb
+ 598 0083 3B       		.uleb128 0x3b
+ 599 0084 0B       		.uleb128 0xb
+ 600 0085 49       		.uleb128 0x49
+ 601 0086 13       		.uleb128 0x13
+ 602 0087 02       		.uleb128 0x2
+ 603 0088 17       		.uleb128 0x17
+ 604 0089 00       		.byte	0
+ 605 008a 00       		.byte	0
+ 606 008b 0A       		.uleb128 0xa
+ 607 008c 34       		.uleb128 0x34
+ 608 008d 00       		.byte	0
+ 609 008e 03       		.uleb128 0x3
+ 610 008f 0E       		.uleb128 0xe
+ 611 0090 3A       		.uleb128 0x3a
+ 612 0091 0B       		.uleb128 0xb
+ 613 0092 3B       		.uleb128 0x3b
+ 614 0093 0B       		.uleb128 0xb
+ 615 0094 49       		.uleb128 0x49
+ 616 0095 13       		.uleb128 0x13
+ 617 0096 02       		.uleb128 0x2
+ 618 0097 17       		.uleb128 0x17
+ 619 0098 00       		.byte	0
+ 620 0099 00       		.byte	0
+ 621 009a 0B       		.uleb128 0xb
+ 622 009b 34       		.uleb128 0x34
+ 623 009c 00       		.byte	0
+ 624 009d 03       		.uleb128 0x3
+ 625 009e 08       		.uleb128 0x8
+ 626 009f 3A       		.uleb128 0x3a
+ 627 00a0 0B       		.uleb128 0xb
+ 628 00a1 3B       		.uleb128 0x3b
+ 629 00a2 0B       		.uleb128 0xb
+ 630 00a3 49       		.uleb128 0x49
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 13
+
+
+ 631 00a4 13       		.uleb128 0x13
+ 632 00a5 02       		.uleb128 0x2
+ 633 00a6 18       		.uleb128 0x18
+ 634 00a7 00       		.byte	0
+ 635 00a8 00       		.byte	0
+ 636 00a9 0C       		.uleb128 0xc
+ 637 00aa 898201   		.uleb128 0x4109
+ 638 00ad 01       		.byte	0x1
+ 639 00ae 11       		.uleb128 0x11
+ 640 00af 01       		.uleb128 0x1
+ 641 00b0 31       		.uleb128 0x31
+ 642 00b1 13       		.uleb128 0x13
+ 643 00b2 01       		.uleb128 0x1
+ 644 00b3 13       		.uleb128 0x13
+ 645 00b4 00       		.byte	0
+ 646 00b5 00       		.byte	0
+ 647 00b6 0D       		.uleb128 0xd
+ 648 00b7 8A8201   		.uleb128 0x410a
+ 649 00ba 00       		.byte	0
+ 650 00bb 02       		.uleb128 0x2
+ 651 00bc 18       		.uleb128 0x18
+ 652 00bd 9142     		.uleb128 0x2111
+ 653 00bf 18       		.uleb128 0x18
+ 654 00c0 00       		.byte	0
+ 655 00c1 00       		.byte	0
+ 656 00c2 0E       		.uleb128 0xe
+ 657 00c3 898201   		.uleb128 0x4109
+ 658 00c6 00       		.byte	0
+ 659 00c7 11       		.uleb128 0x11
+ 660 00c8 01       		.uleb128 0x1
+ 661 00c9 31       		.uleb128 0x31
+ 662 00ca 13       		.uleb128 0x13
+ 663 00cb 00       		.byte	0
+ 664 00cc 00       		.byte	0
+ 665 00cd 0F       		.uleb128 0xf
+ 666 00ce 898201   		.uleb128 0x4109
+ 667 00d1 01       		.byte	0x1
+ 668 00d2 11       		.uleb128 0x11
+ 669 00d3 01       		.uleb128 0x1
+ 670 00d4 31       		.uleb128 0x31
+ 671 00d5 13       		.uleb128 0x13
+ 672 00d6 00       		.byte	0
+ 673 00d7 00       		.byte	0
+ 674 00d8 10       		.uleb128 0x10
+ 675 00d9 01       		.uleb128 0x1
+ 676 00da 01       		.byte	0x1
+ 677 00db 49       		.uleb128 0x49
+ 678 00dc 13       		.uleb128 0x13
+ 679 00dd 01       		.uleb128 0x1
+ 680 00de 13       		.uleb128 0x13
+ 681 00df 00       		.byte	0
+ 682 00e0 00       		.byte	0
+ 683 00e1 11       		.uleb128 0x11
+ 684 00e2 21       		.uleb128 0x21
+ 685 00e3 00       		.byte	0
+ 686 00e4 49       		.uleb128 0x49
+ 687 00e5 13       		.uleb128 0x13
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 14
+
+
+ 688 00e6 2F       		.uleb128 0x2f
+ 689 00e7 0B       		.uleb128 0xb
+ 690 00e8 00       		.byte	0
+ 691 00e9 00       		.byte	0
+ 692 00ea 12       		.uleb128 0x12
+ 693 00eb 34       		.uleb128 0x34
+ 694 00ec 00       		.byte	0
+ 695 00ed 03       		.uleb128 0x3
+ 696 00ee 0E       		.uleb128 0xe
+ 697 00ef 3A       		.uleb128 0x3a
+ 698 00f0 0B       		.uleb128 0xb
+ 699 00f1 3B       		.uleb128 0x3b
+ 700 00f2 05       		.uleb128 0x5
+ 701 00f3 49       		.uleb128 0x49
+ 702 00f4 13       		.uleb128 0x13
+ 703 00f5 3F       		.uleb128 0x3f
+ 704 00f6 19       		.uleb128 0x19
+ 705 00f7 3C       		.uleb128 0x3c
+ 706 00f8 19       		.uleb128 0x19
+ 707 00f9 00       		.byte	0
+ 708 00fa 00       		.byte	0
+ 709 00fb 13       		.uleb128 0x13
+ 710 00fc 35       		.uleb128 0x35
+ 711 00fd 00       		.byte	0
+ 712 00fe 49       		.uleb128 0x49
+ 713 00ff 13       		.uleb128 0x13
+ 714 0100 00       		.byte	0
+ 715 0101 00       		.byte	0
+ 716 0102 14       		.uleb128 0x14
+ 717 0103 2E       		.uleb128 0x2e
+ 718 0104 00       		.byte	0
+ 719 0105 3F       		.uleb128 0x3f
+ 720 0106 19       		.uleb128 0x19
+ 721 0107 3C       		.uleb128 0x3c
+ 722 0108 19       		.uleb128 0x19
+ 723 0109 6E       		.uleb128 0x6e
+ 724 010a 0E       		.uleb128 0xe
+ 725 010b 03       		.uleb128 0x3
+ 726 010c 0E       		.uleb128 0xe
+ 727 010d 3A       		.uleb128 0x3a
+ 728 010e 0B       		.uleb128 0xb
+ 729 010f 3B       		.uleb128 0x3b
+ 730 0110 0B       		.uleb128 0xb
+ 731 0111 00       		.byte	0
+ 732 0112 00       		.byte	0
+ 733 0113 15       		.uleb128 0x15
+ 734 0114 2E       		.uleb128 0x2e
+ 735 0115 00       		.byte	0
+ 736 0116 3F       		.uleb128 0x3f
+ 737 0117 19       		.uleb128 0x19
+ 738 0118 3C       		.uleb128 0x3c
+ 739 0119 19       		.uleb128 0x19
+ 740 011a 6E       		.uleb128 0x6e
+ 741 011b 0E       		.uleb128 0xe
+ 742 011c 03       		.uleb128 0x3
+ 743 011d 0E       		.uleb128 0xe
+ 744 011e 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 15
+
+
+ 745 011f 0B       		.uleb128 0xb
+ 746 0120 3B       		.uleb128 0x3b
+ 747 0121 05       		.uleb128 0x5
+ 748 0122 00       		.byte	0
+ 749 0123 00       		.byte	0
+ 750 0124 00       		.byte	0
+ 751              		.section	.debug_loc,"",%progbits
+ 752              	.Ldebug_loc0:
+ 753              	.LLST0:
+ 754 0000 32000000 		.4byte	.LVL8
+ 755 0004 35000000 		.4byte	.LVL9-1
+ 756 0008 0100     		.2byte	0x1
+ 757 000a 50       		.byte	0x50
+ 758 000b 00000000 		.4byte	0
+ 759 000f 00000000 		.4byte	0
+ 760              	.LLST1:
+ 761 0013 3C000000 		.4byte	.LVL10
+ 762 0017 3F000000 		.4byte	.LVL11-1
+ 763 001b 0100     		.2byte	0x1
+ 764 001d 50       		.byte	0x50
+ 765 001e 00000000 		.4byte	0
+ 766 0022 00000000 		.4byte	0
+ 767              		.section	.debug_aranges,"",%progbits
+ 768 0000 1C000000 		.4byte	0x1c
+ 769 0004 0200     		.2byte	0x2
+ 770 0006 00000000 		.4byte	.Ldebug_info0
+ 771 000a 04       		.byte	0x4
+ 772 000b 00       		.byte	0
+ 773 000c 0000     		.2byte	0
+ 774 000e 0000     		.2byte	0
+ 775 0010 00000000 		.4byte	.LFB64
+ 776 0014 74000000 		.4byte	.LFE64-.LFB64
+ 777 0018 00000000 		.4byte	0
+ 778 001c 00000000 		.4byte	0
+ 779              		.section	.debug_ranges,"",%progbits
+ 780              	.Ldebug_ranges0:
+ 781 0000 00000000 		.4byte	.LFB64
+ 782 0004 74000000 		.4byte	.LFE64
+ 783 0008 00000000 		.4byte	0
+ 784 000c 00000000 		.4byte	0
+ 785              		.section	.debug_line,"",%progbits
+ 786              	.Ldebug_line0:
+ 787 0000 2F020000 		.section	.debug_str,"MS",%progbits,1
+ 787      02000702 
+ 787      00000201 
+ 787      FB0E0D00 
+ 787      01010101 
+ 788              	.LASF35:
+ 789 0000 433A5C55 		.ascii	"C:\\Users\\lenovo\\Desktop\\Embedded_Systems\\PSOC\\"
+ 789      73657273 
+ 789      5C6C656E 
+ 789      6F766F5C 
+ 789      4465736B 
+ 790 002e 45787065 		.ascii	"Experiments\\Design01.cydsn\000"
+ 790      72696D65 
+ 790      6E74735C 
+ 790      44657369 
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 16
+
+
+ 790      676E3031 
+ 791              	.LASF31:
+ 792 0049 55534255 		.ascii	"USBUART_1_GetConfiguration\000"
+ 792      4152545F 
+ 792      315F4765 
+ 792      74436F6E 
+ 792      66696775 
+ 793              	.LASF9:
+ 794 0064 5F5F696E 		.ascii	"__int32_t\000"
+ 794      7433325F 
+ 794      7400
+ 795              	.LASF3:
+ 796 006e 73686F72 		.ascii	"short unsigned int\000"
+ 796      7420756E 
+ 796      7369676E 
+ 796      65642069 
+ 796      6E7400
+ 797              	.LASF22:
+ 798 0081 4144435F 		.ascii	"ADC_SAR_1_CountsTo_mVolts\000"
+ 798      5341525F 
+ 798      315F436F 
+ 798      756E7473 
+ 798      546F5F6D 
+ 799              	.LASF8:
+ 800 009b 756E7369 		.ascii	"unsigned int\000"
+ 800      676E6564 
+ 800      20696E74 
+ 800      00
+ 801              	.LASF13:
+ 802 00a8 666C6F61 		.ascii	"float\000"
+ 802      7400
+ 803              	.LASF20:
+ 804 00ae 4144435F 		.ascii	"ADC_SAR_1_IsEndConversion\000"
+ 804      5341525F 
+ 804      315F4973 
+ 804      456E6443 
+ 804      6F6E7665 
+ 805              	.LASF1:
+ 806 00c8 756E7369 		.ascii	"unsigned char\000"
+ 806      676E6564 
+ 806      20636861 
+ 806      7200
+ 807              	.LASF33:
+ 808 00d6 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 808      43313120 
+ 808      352E342E 
+ 808      31203230 
+ 808      31363036 
+ 809 0109 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 809      20726576 
+ 809      6973696F 
+ 809      6E203233 
+ 809      37373135 
+ 810 013c 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 810      66756E63 
+ 810      74696F6E 
+ 810      2D736563 
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 17
+
+
+ 810      74696F6E 
+ 811              	.LASF12:
+ 812 0164 696E7431 		.ascii	"int16\000"
+ 812      3600
+ 813              	.LASF5:
+ 814 016a 6C6F6E67 		.ascii	"long unsigned int\000"
+ 814      20756E73 
+ 814      69676E65 
+ 814      6420696E 
+ 814      7400
+ 815              	.LASF29:
+ 816 017c 4144435F 		.ascii	"ADC_SAR_1_StartConvert\000"
+ 816      5341525F 
+ 816      315F5374 
+ 816      61727443 
+ 816      6F6E7665 
+ 817              	.LASF19:
+ 818 0193 766F6C74 		.ascii	"voltage\000"
+ 818      61676500 
+ 819              	.LASF37:
+ 820 019b 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 820      52784275 
+ 820      66666572 
+ 820      00
+ 821              	.LASF14:
+ 822 01a8 646F7562 		.ascii	"double\000"
+ 822      6C6500
+ 823              	.LASF26:
+ 824 01af 55534255 		.ascii	"USBUART_1_PutData\000"
+ 824      4152545F 
+ 824      315F5075 
+ 824      74446174 
+ 824      6100
+ 825              	.LASF36:
+ 826 01c1 6D61696E 		.ascii	"main\000"
+ 826      00
+ 827              	.LASF32:
+ 828 01c6 55534255 		.ascii	"USBUART_1_CDC_Init\000"
+ 828      4152545F 
+ 828      315F4344 
+ 828      435F496E 
+ 828      697400
+ 829              	.LASF25:
+ 830 01d9 7374726C 		.ascii	"strlen\000"
+ 830      656E00
+ 831              	.LASF7:
+ 832 01e0 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 832      206C6F6E 
+ 832      6720756E 
+ 832      7369676E 
+ 832      65642069 
+ 833              	.LASF18:
+ 834 01f7 61646352 		.ascii	"adcResult\000"
+ 834      6573756C 
+ 834      7400
+ 835              	.LASF10:
+ 836 0201 696E7433 		.ascii	"int32_t\000"
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 18
+
+
+ 836      325F7400 
+ 837              	.LASF17:
+ 838 0209 73697A65 		.ascii	"sizetype\000"
+ 838      74797065 
+ 838      00
+ 839              	.LASF21:
+ 840 0212 4144435F 		.ascii	"ADC_SAR_1_GetResult16\000"
+ 840      5341525F 
+ 840      315F4765 
+ 840      74526573 
+ 840      756C7431 
+ 841              	.LASF6:
+ 842 0228 6C6F6E67 		.ascii	"long long int\000"
+ 842      206C6F6E 
+ 842      6720696E 
+ 842      7400
+ 843              	.LASF34:
+ 844 0236 6D61696E 		.ascii	"main.c\000"
+ 844      2E6300
+ 845              	.LASF15:
+ 846 023d 63686172 		.ascii	"char\000"
+ 846      00
+ 847              	.LASF2:
+ 848 0242 73686F72 		.ascii	"short int\000"
+ 848      7420696E 
+ 848      7400
+ 849              	.LASF11:
+ 850 024c 75696E74 		.ascii	"uint8\000"
+ 850      3800
+ 851              	.LASF30:
+ 852 0252 55534255 		.ascii	"USBUART_1_Start\000"
+ 852      4152545F 
+ 852      315F5374 
+ 852      61727400 
+ 853              	.LASF24:
+ 854 0262 55534255 		.ascii	"USBUART_1_CDCIsReady\000"
+ 854      4152545F 
+ 854      315F4344 
+ 854      43497352 
+ 854      65616479 
+ 855              	.LASF4:
+ 856 0277 6C6F6E67 		.ascii	"long int\000"
+ 856      20696E74 
+ 856      00
+ 857              	.LASF16:
+ 858 0280 6C6F6E67 		.ascii	"long double\000"
+ 858      20646F75 
+ 858      626C6500 
+ 859              	.LASF0:
+ 860 028c 7369676E 		.ascii	"signed char\000"
+ 860      65642063 
+ 860      68617200 
+ 861              	.LASF28:
+ 862 0298 4144435F 		.ascii	"ADC_SAR_1_Start\000"
+ 862      5341525F 
+ 862      315F5374 
+ 862      61727400 
+ARM GAS  C:\Users\lenovo\AppData\Local\Temp\cckmRBBP.s 			page 19
+
+
+ 863              	.LASF23:
+ 864 02a8 73707269 		.ascii	"sprintf\000"
+ 864      6E746600 
+ 865              	.LASF27:
+ 866 02b0 43794465 		.ascii	"CyDelay\000"
+ 866      6C617900 
+ 867              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
